@@ -6,26 +6,28 @@ import random
 import time
 start_time = time.time()
 
-input_file='/home/lia/Documents/the_project/dataset/Movies_and_TV_review.csv'
+input_file='/home/lia/Documents/the_project/dataset/to_use/top_20_reviewed.csv'
 
 df = pandas.read_csv(input_file)
 
-# print("DATA SHAPE")
-# print(df.shape)
-#
-# df['class'] = df['class'].astype('category')
-# print("COLUMN TYPES")
-# print(df.dtypes)
-#
 pandas.set_option('float_format', '{:f}'.format)
 
-# DATA STATS
-# print("DATA STATS")
-# print(df["overall"].describe())
+print("DATA SHAPE")
+print(df.shape)
+#
+# df['class'] = df['class'].astype('category')
+print("COLUMN TYPES")
+print(df.dtypes)
+#
 
-asinCount = df['asin'].value_counts(sort=False)
-print("count: ")
-print(asinCount)
+
+# DATA STATS
+print("DATA STATS")
+print(df["overall"].describe())
+
+# asinCount = df['asin'].value_counts(sort=False)
+# print("count: ")
+# print(asinCount)
 
 
 # dataStats = df.describe()
@@ -36,7 +38,7 @@ print(asinCount)
 # classCount = df['class'].value_counts(sort=False)
 # print(classCount)
 #
-asinCount.to_csv("asin_count.csv", encoding="utf-8", sep=",")
+
 #
 # # # accessing series
 # # print(classCount.values)
