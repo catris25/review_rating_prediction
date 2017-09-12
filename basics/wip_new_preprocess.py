@@ -89,22 +89,35 @@ def sep_to_x_y(df):
     y_data = df['overall']
     return X_data, y_data
 
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/1.csv'
+def find_common_words(df):
+    all_words =[]
+    for review in df['reviewText']:
+        for word in review:
+            all_words.append(word)
+    fdist = FreqDist(all_words)
+    most_common = fdist.most_common(10)
+    return most_common
+
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/1.csv'
 orig_df = pd.read_csv(input_file)
 
 df = preprocess(orig_df)
 
+ratings = [1,2,3,4,5]
+
+for rtg in ratings:
+    temp = df.loc[df['overall']==rtg]
+    # print(temp.head(5))
+    common_words = find_common_words(temp)
+
+    print(rtg)
+    print("---------")
+    print(common_words)
+
+sys.exit("ok")
+
 # CALCULATING ACCURACY
 X_data, y_data = sep_to_x_y(df)
-
-all_words =[]
-for review in df['reviewText']:
-    for word in review:
-        all_words.append(word)
-fdist = FreqDist(all_words)
-
-# print(fdist.most_common())
-# sys.exit("ok")
 
 vect = TfidfVectorizer(binary=False, min_df=0.035, max_df=0.25)
 X_dtm = vect.fit_transform(X_data)
