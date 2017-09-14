@@ -98,28 +98,29 @@ def find_common_words(df):
     most_common = fdist.most_common(10)
     return most_common
 
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/1.csv'
+input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/10percent/0.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/to_use/music_helpfulness/helpful.csv'
 orig_df = pd.read_csv(input_file)
 
 df = preprocess(orig_df)
 
-ratings = [1,2,3,4,5]
-
-for rtg in ratings:
-    temp = df.loc[df['overall']==rtg]
-    # print(temp.head(5))
-    common_words = find_common_words(temp)
-
-    print(rtg)
-    print("---------")
-    print(common_words)
-
-sys.exit("ok")
+# ratings = [1,2,3,4,5]
+#
+# for rtg in ratings:
+#     temp = df.loc[df['overall']==rtg]
+#     # print(temp.head(5))
+#     common_words = find_common_words(temp)
+#
+#     print(rtg)
+#     print("---------")
+#     print(common_words)
+#
+# sys.exit("ok")
 
 # CALCULATING ACCURACY
 X_data, y_data = sep_to_x_y(df)
 
-vect = TfidfVectorizer(binary=False, min_df=0.035, max_df=0.25)
+vect = TfidfVectorizer(binary=True, min_df=5)
 X_dtm = vect.fit_transform(X_data)
 
 print(X_dtm.toarray().shape)
@@ -128,7 +129,7 @@ mnb = MultinomialNB()
 knn = KNeighborsClassifier(n_neighbors=1)
 
 clf = mnb
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.5, random_state=123)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33, random_state=1)
 
 clf.fit(X_train, y_train)
 y_pred_class = clf.predict(X_test)
