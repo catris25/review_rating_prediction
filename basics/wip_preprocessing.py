@@ -116,6 +116,8 @@ df = preprocess(df)
 # CALCULATING ACCURACY
 X_train, y_train = sep_to_x_y(df)
 
+# print(X_train[0])
+
 vect = TfidfVectorizer(binary=True, min_df=0.035, max_df=0.25)
 X_train_dtm = vect.fit_transform(X_train)
 
