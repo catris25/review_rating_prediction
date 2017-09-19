@@ -19,7 +19,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn import svm, grid_search
 from sklearn.svm import LinearSVC
@@ -116,48 +116,48 @@ def ent(data):
     entropy=sc.stats.entropy(p_data)  # input probabilities to get the entropy
     return entropy
 
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/27.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/20percent/3.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/11.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/top_30.csv'
+
 orig_df = pd.read_csv(input_file)
 print(orig_df['overall'].value_counts())
 df = preprocess(orig_df)
 
 # df.to_csv("/home/lia/Documents/the_project/dataset/clean_df.csv", index=False, sep=',', encoding='utf-8')
 #
-ratings = [1,2,3,4,5]
-
-for rtg in ratings:
-    temp = df.loc[df['overall']==rtg]
-    # print(temp.head(5))
-    common_words = find_common_words(temp)
-
-    print(rtg)
-    print("---------")
-    print(common_words)
+# ratings = [1,2,3,4,5]
+#
+# for rtg in ratings:
+#     temp = df.loc[df['overall']==rtg]
+#     # print(temp.head(5))
+#     common_words = find_bi(temp)
+#
+#     print(rtg)
+#     print("---------")
+#     print(common_words)
 #
 # sys.exit("ok")
 
 # CALCULATING ACCURACY
 X_data, y_data = sep_to_x_y(df)
 
-# vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(1,3))
-vect = CountVectorizer(binary=False, min_df=5, ngram_range=(1,2))
+# vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(2,2))
+vect = CountVectorizer(binary=True, min_df=5, ngram_range=(1,2))
 X_dtm = vect.fit_transform(X_data)
 
-print(vect.get_feature_names())
+# print(vect.get_feature_names())
 
 print(X_dtm.toarray().shape)
 
 mnb = MultinomialNB()
-knn = KNeighborsClassifier(n_neighbors=9)
+knn = KNeighborsClassifier(n_neighbors=7)
 svr = svm.SVC(kernel='rbf',C=15.0,gamma=0.01)
 logreg = linear_model.LogisticRegression()
-mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=12)
+mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(2,5), random_state=12)
 # best mlp [2,4] [3,4,6]
 
-clf = mnb
+clf = logreg
 X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.3, random_state=123)
 
 clf.fit(X_train, y_train)
@@ -185,6 +185,6 @@ print(conf_matrix)
 class_labels = [1,2,3,4,5]
 feature_names = vect.get_feature_names()
 for i, class_label in enumerate(class_labels):
-    top10 = np.argsort(clf.coef_[i])[-20:]
+    top10 = np.argsort(clf.coef_[i])[-30:]
     print("%s: %s" % (class_label,
           ", ".join(feature_names[j] for j in top10)))
