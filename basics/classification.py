@@ -26,6 +26,7 @@ def sep_to_x_y(df):
     return X_data, y_data
 
 input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/musical_inst/clean_data.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 
 orig_df = pd.read_csv(input_file)
@@ -36,8 +37,8 @@ print(orig_df.head(5))
 # CALCULATING ACCURACY
 X_data, y_data = sep_to_x_y(orig_df)
 
-# vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(1,2))
-vect = CountVectorizer(binary=True, min_df=3, ngram_range=(1,3))
+# vect = TfidfVectorizer(binary=True, min_df=3, max_df=0.3, ngram_range=(1,3))
+vect = CountVectorizer(binary=False, min_df=5, ngram_range=(1,5))
 # vect = HashingVectorizer()
 
 X_dtm = vect.fit_transform(X_data)
@@ -48,19 +49,23 @@ print(X_dtm.toarray().shape)
 
 mnb = MultinomialNB()
 knn = KNeighborsClassifier(n_neighbors=5)
-svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
-logreg = linear_model.LogisticRegression()
+# svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
+svr = svm.SVC(kernel='linear',
+            class_weight='balanced', # penalize
+            probability=True)
+
+logreg = linear_model.LogisticRegression(penalty="l2", C=1)
 rf = RandomForestClassifier(random_state=123)
-mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(2,2,5), random_state=12)
+mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=12)
 # best mlp [2,4] [3,4,6]
 
-ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb)], voting='soft')
-bagging = BaggingClassifier(base_estimator=knn, n_estimators=100, random_state=123)
+ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
+bagging = BaggingClassifier(base_estimator=mnb, n_estimators=100, random_state=123)
 
-clf = knn
+clf = logreg
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33, random_state=456)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25, random_state=99)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)
@@ -73,9 +78,12 @@ print(accu)
 conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
 print(conf_matrix)
 
-# class_labels = [1,2,3,4,5]
-# feature_names = vect.get_feature_names()
-# for i, class_label in enumerate(class_labels):
-#     top10 = np.argsort(clf.coef_[i])[-15:]
-#     print("%s: %s" % (class_label,
-#           ". ".join(feature_names[j] for j in top10)))
+report_matrix = metrics.classification_report(y_test, y_pred_class)
+print(report_matrix)
+
+class_labels = [1,2,3,4,5]
+feature_names = vect.get_feature_names()
+for i, class_label in enumerate(class_labels):
+    top10 = np.argsort(clf.coef_[i])[-15:]
+    print("%s: %s" % (class_label,
+          ". ".join(feature_names[j] for j in top10)))

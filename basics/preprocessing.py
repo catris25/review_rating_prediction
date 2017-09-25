@@ -39,8 +39,6 @@ def stop_words_removal(df):
     sw = set(stopwords.words("english"))
     stop_words = sw.union(["film", "movie", "movies", "films"])
 
-    # print(stop_words)
-    # sys.exit("ok")
     for review in df['reviewText']:
         filtered_text = [word for word in review if not word in stop_words]
         df_filtering.append(filtered_text)
@@ -75,7 +73,7 @@ def stemming(df):
     ss = SnowballStemmer('english')
     ps = PorterStemmer()
     for review in df['reviewText']:
-        stemmed_text = [ss.stem(word) for word in review]
+        stemmed_text = [ps.stem(word) for word in review]
         df_stemming.append(stemmed_text)
 
     df['reviewText'] = df_stemming
@@ -83,10 +81,12 @@ def stemming(df):
 
     return df
 
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/20percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/0.csv'
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/top_30.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/10percent/3.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/4.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
+# input_file = "/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv"
+# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/new_set/helpful_en.csv'
 
 orig_df = pd.read_csv(input_file)
 print(orig_df['overall'].value_counts().sort_index())
