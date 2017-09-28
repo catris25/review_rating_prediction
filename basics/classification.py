@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re, string
 import sys
+# import textmining
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier, AdaBoostClassifier,BaggingClassifier
@@ -35,13 +36,15 @@ print(orig_df['overall'].value_counts().sort_index())
 print(orig_df.head(5))
 
 # CALCULATING ACCURACY
-X_data, y_data = sep_to_x_y(orig_df)
+# X_data, y_data = sep_to_x_y(orig_df)
+X_data = orig_df['reviewText']
+y_data = orig_df['overall']
 
 # vect = TfidfVectorizer(binary=True, min_df=3, max_df=0.3, ngram_range=(1,3))
-vect = CountVectorizer(binary=False, min_df=5, ngram_range=(1,5))
+vect = CountVectorizer(binary=False, min_df=5, ngram_range=(1,3))
 # vect = HashingVectorizer()
 
-X_dtm = vect.fit_transform(X_data)
+X_dtm = vect.fit_transform(X_data.values.astype('U'))
 
 # print(vect.get_feature_names())
 
@@ -62,7 +65,7 @@ mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), rand
 ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
 bagging = BaggingClassifier(base_estimator=mnb, n_estimators=100, random_state=123)
 
-clf = logreg
+clf =mnb
 
 # SPLIT DATASET
 X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25, random_state=99)

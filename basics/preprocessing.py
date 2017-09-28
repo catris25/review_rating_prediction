@@ -7,7 +7,7 @@ import nltk
 
 from nltk import bigrams, trigrams, FreqDist
 from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.tokenize import RegexpTokenizer, PunktSentenceTokenizer
+from nltk.tokenize import RegexpTokenizer, PunktSentenceTokenizer, TweetTokenizer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import PorterStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -19,11 +19,13 @@ from nltk.classify import NaiveBayesClassifier
 def removing_punct(df):
     df_removal = []
     ps_token = PunktSentenceTokenizer()
+    tw = TweetTokenizer()
     for review in df['reviewText']:
         temp = re.sub("[^a-zA-Z']", " ", str(review))
         temp = temp.replace("'", "")
         temp = temp.lower()
-        temp = word_tokenize(temp)
+        # temp = word_tokenize(temp)
+        temp = tw.tokenize(temp)
 
         df_removal.append(temp)
 
@@ -38,6 +40,7 @@ def stop_words_removal(df):
     df_filtering = []
     sw = set(stopwords.words("english"))
     stop_words = sw.union(["film", "movie", "movies", "films"])
+    # stop_words = sw
 
     for review in df['reviewText']:
         filtered_text = [word for word in review if not word in stop_words]
@@ -82,7 +85,7 @@ def stemming(df):
     return df
 
 # input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/10percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/4.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/0.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 # input_file = "/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv"
