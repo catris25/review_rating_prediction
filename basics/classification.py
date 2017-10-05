@@ -51,7 +51,8 @@ X_dtm = vect.fit_transform(X_data.values.astype('U'))
 print(X_dtm.toarray().shape)
 
 mnb = MultinomialNB()
-bnb = BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)
+# bnb = BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)
+bnb = BernoulliNB()
 knn = KNeighborsClassifier(n_neighbors=5)
 # svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
 svr = svm.SVC(kernel='linear',
@@ -60,21 +61,28 @@ svr = svm.SVC(kernel='linear',
 
 logreg = linear_model.LogisticRegression(penalty="l2", C=1)
 rf = RandomForestClassifier(random_state=123)
-mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=12)
+mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=125)
 # best mlp [2,4] [3,4,6]
 
 ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
 bagging = BaggingClassifier(base_estimator=bnb, n_estimators=100, random_state=123)
 
-clf = bnb
+clf = mnb
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25, random_state=123)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33, random_state = 444)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)
 
 y_pred_class = clf.predict(X_test)
+
+# y_pred_class = clf.fit(X_train, y_train).predict_proba(X_test)
+# probs = y_pred_class.tolist()
+# print(probs)
+# print([(round(max(i)*5)) for i in probs])
+# print(y_test.tolist())
+# sys.exit("ok")
 
 accu = accuracy_score(y_pred_class, y_test)
 print(accu)
@@ -84,6 +92,20 @@ print(conf_matrix)
 
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
+
+# incorrects = np.nonzero(y_pred_class != y_test)
+incorrectly_zero = np.nonzero((y_pred_class != y_test) & (y_pred_class==0))
+df_incorrect = orig_df.ix[incorrectly_zero]
+print(df_incorrect)
+
+# df_incorrect.loc[df_incorrect['orig_overall']==]
+
+# y_test = np.asarray(y_test)
+# incorrect = np.where(y_test != y_pred_class)
+# orig_df['prediction'] = y_pred_class.tolist()
+#
+# df_incorrect = orig_df.ix[incorrect][['reviewText', 'overall', 'prediction']]
+# print(df_incorrect)
 
 # class_labels = [0,1]
 # feature_names = vect.get_feature_names()

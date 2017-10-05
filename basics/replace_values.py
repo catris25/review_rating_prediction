@@ -9,8 +9,11 @@ df = pd.read_csv(input_file)
 # df.loc[df['overall'] == 3 , 'overall'] = 0
 # df.loc[df['overall'] > 3 , 'overall'] = 10
 
-df.loc[df['overall'] < 5 , 'overall'] = 0
-df.loc[df['overall'] == 5 , 'overall'] = 5
+# df.loc[df['overall'] < 5 , 'overall'] = 0
+# df.loc[df['overall'] >= 5 , 'overall'] = 5
+
+df['orig_overall'] = df['overall']
+df['overall'] = np.where(df['overall']<5, '0', '5')
 
 print(df.head(10))
 print(df['overall'].value_counts())

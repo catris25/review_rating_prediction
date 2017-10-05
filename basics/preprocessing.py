@@ -35,6 +35,17 @@ def removing_punct(df):
 
     return df
 
+def pos_tagging(df):
+    df_pos_tag = []
+    for review in df['reviewText']:
+        temp = nltk.pos_tag(review)
+        df_pos_tag.append(temp)
+
+    df['reviewText'] = df_pos_tag
+    print(df['reviewText'].head(5))
+    print(sum([len(r) for r in df['reviewText']]))
+    return df
+
 # Stop words removal/filtering
 def stop_words_removal(df):
     df_filtering = []
@@ -84,8 +95,9 @@ def stemming(df):
 
     return df
 
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/10percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/4.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/21.csv'
+# input_file= '/home/lia/Documents/the_project/dataset/musical_inst/helpful_en.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 # input_file = "/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv"
@@ -95,8 +107,11 @@ orig_df = pd.read_csv(input_file)
 print(orig_df['overall'].value_counts().sort_index())
 
 df = removing_punct(orig_df)
+# df = pos_tagging(df)
+# sys.exit("ok")
+
 df = stop_words_removal(df)
-df = lemmatize(df)
+# df = lemmatize(df)
 df = stemming(df)
 
 output_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
