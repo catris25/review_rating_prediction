@@ -7,7 +7,7 @@ import sys
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier, AdaBoostClassifier,BaggingClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, HashingVectorizer
-from sklearn.naive_bayes import MultinomialNB, GaussianNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm, grid_search
@@ -26,7 +26,7 @@ def sep_to_x_y(df):
 
     return X_data, y_data
 
-input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
+input_file = '/home/lia/Documents/the_project/dataset/output/rep_data.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/musical_inst/clean_data.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 
@@ -41,7 +41,7 @@ X_data = orig_df['reviewText']
 y_data = orig_df['overall']
 
 # vect = TfidfVectorizer(binary=True, min_df=3, max_df=0.3, ngram_range=(1,3))
-vect = CountVectorizer(binary=False, min_df=5, ngram_range=(1,3))
+vect = CountVectorizer(binary=True, min_df=5, ngram_range=(1,3))
 # vect = HashingVectorizer()
 
 X_dtm = vect.fit_transform(X_data.values.astype('U'))
@@ -51,6 +51,7 @@ X_dtm = vect.fit_transform(X_data.values.astype('U'))
 print(X_dtm.toarray().shape)
 
 mnb = MultinomialNB()
+bnb = BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)
 knn = KNeighborsClassifier(n_neighbors=5)
 # svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
 svr = svm.SVC(kernel='linear',
@@ -63,12 +64,12 @@ mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), rand
 # best mlp [2,4] [3,4,6]
 
 ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
-bagging = BaggingClassifier(base_estimator=mnb, n_estimators=100, random_state=123)
+bagging = BaggingClassifier(base_estimator=bnb, n_estimators=100, random_state=123)
 
-clf =mnb
+clf = bnb
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25, random_state=99)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25, random_state=123)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)
@@ -84,9 +85,9 @@ print(conf_matrix)
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
 
-class_labels = [1,2,3,4,5]
-feature_names = vect.get_feature_names()
-for i, class_label in enumerate(class_labels):
-    top10 = np.argsort(clf.coef_[i])[-15:]
-    print("%s: %s" % (class_label,
-          ". ".join(feature_names[j] for j in top10)))
+# class_labels = [0,1]
+# feature_names = vect.get_feature_names()
+# for i, class_label in enumerate(class_labels):
+#     top10 = np.argsort(clf.coef_[i])[-15:]
+#     print("%s: %s" % (class_label,
+#           ". ".join(feature_names[j] for j in top10)))

@@ -4,7 +4,7 @@ import numpy as np
 from langdetect import detect
 
 # input_file = '/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv'
-local_file ='/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/0.csv'
+local_file ='/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/21.csv'
 df = pd.read_csv(local_file)
 
 for i, row in df.iterrows():

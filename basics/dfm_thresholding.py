@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
-import re, string, ast
+import re, string, ast, math
 import sys
 import nltk, numbers
 from collections import Counter
 
 input_file = '/home/lia/Documents/the_project/dataset/output/test_data.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
 
 df = pd.read_csv(input_file)
 print(df['overall'].value_counts().sort_index())
@@ -54,11 +55,12 @@ def calc_concentration_degree(cdf):
         cd[word] = cdf[word]/(total_df[word]-cdf[word]+1)
     return cd
 
+print("CONCENTRATION DEGREE")
 concentration_dict = {}
 for rtg in ratings:
+    print("\nrating %d stars"%rtg )
 
     # get doc freq (df) of each word in each class
-    print("\nrating %d stars"%rtg )
     data_per_class = df.loc[(df['overall'] == rtg)]
     current_df = calc_docfreq(data_per_class['reviewText'])
 
@@ -66,13 +68,16 @@ for rtg in ratings:
     concent_deg = calc_concentration_degree(current_df)
 
     sorted_dict = sorted(((value,key) for (key,value) in concent_deg.items()), reverse=True)
-    print(sorted_dict[:10])
+    # print(sorted_dict[:10])
+    print(concent_deg)
 
     concentration_dict[rtg] = concent_deg
 
 # DISPERSE DEGREE
+print("\nDISPERSE DEGREE")
 disperse_dict = {}
 for rtg in ratings:
+    print("\nrating %d stars"%rtg )
     docs_len = len(df[df['overall'] == rtg])
 
     data_per_class = df.loc[(df['overall'] == rtg)]
@@ -82,7 +87,48 @@ for rtg in ratings:
     for word in word_list:
         disperse_deg[word] = current_df[word]/docs_len
 
-    # print(disperse_deg)
+    print(disperse_deg)
     disperse_dict[rtg] = disperse_deg
 
 # CONTRIBUTION DEGREE
+print("\nCONTRIBUTION DEGREE")
+
+contribution_dict = {}
+for rtg in ratings:
+    print("\nrating %d stars"%rtg )
+
+    # get doc freq (df) of each word in each class
+    data_in_c = df.loc[(df['overall'] == rtg)]
+    corpus_len = len(df)
+
+    contrib_deg = {}
+    for word in ['wonder']:
+        doc_freq = sum(1 for text in data_in_c['reviewText'] if word in text)
+        if(doc_freq!=0):
+            p_ct = doc_freq/corpus_len
+            # p_cnt = doc_freq/total_df[word]
+            p_cnt = doc_freq/len(data_in_c)
+            p_c = len(data_in_c)/corpus_len
+
+            temp = p_cnt/p_c
+            contrib_deg[word] = p_ct*math.log10(temp)
+        else:
+            p_ct = 0
+            p_cnt = 0
+            p_c = 0
+            contrib_deg[word] = 0
+
+        print(doc_freq)
+        print(p_ct)
+        print(p_cnt)
+        print(p_c)
+
+    print(contrib_deg)
+    contribution_dict[rtg] = contrib_deg
+
+# CALCULATE ALL
+# for rtg in ratings:
+#     print("\nrating %d stars"%rtg )
+#     for word in all_words:
+#         dfm = concentration_dict[rtg][word] + disperse_dict[rtg][word] + contribution_dict[rtg][word]
+#         print("%s:%f"%(word,dfm))
