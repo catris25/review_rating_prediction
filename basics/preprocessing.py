@@ -96,7 +96,7 @@ def stemming(df):
     return df
 
 # input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/21.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/25.csv'
 # input_file= '/home/lia/Documents/the_project/dataset/musical_inst/helpful_en.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"

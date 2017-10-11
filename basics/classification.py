@@ -40,7 +40,7 @@ print(orig_df.head(5))
 X_data = orig_df['reviewText']
 y_data = orig_df['overall']
 
-# vect = TfidfVectorizer(binary=True, min_df=3, max_df=0.3, ngram_range=(1,3))
+# vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(1,3))
 vect = CountVectorizer(binary=True, min_df=5, ngram_range=(1,3))
 # vect = HashingVectorizer()
 
@@ -51,38 +51,30 @@ X_dtm = vect.fit_transform(X_data.values.astype('U'))
 print(X_dtm.toarray().shape)
 
 mnb = MultinomialNB()
-# bnb = BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)
 bnb = BernoulliNB()
-knn = KNeighborsClassifier(n_neighbors=5)
+
+# knn = KNeighborsClassifier(n_neighbors=5)
 # svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
-svr = svm.SVC(kernel='linear',
-            class_weight='balanced', # penalize
-            probability=True)
-
-logreg = linear_model.LogisticRegression(penalty="l2", C=1)
-rf = RandomForestClassifier(random_state=123)
-mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=125)
-# best mlp [2,4] [3,4,6]
-
-ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
-bagging = BaggingClassifier(base_estimator=bnb, n_estimators=100, random_state=123)
+# svr = svm.SVC(kernel='linear',
+#             class_weight='balanced', # penalize
+#             probability=True)
+#
+# logreg = linear_model.LogisticRegression(penalty="l2", C=1)
+# rf = RandomForestClassifier(random_state=123)
+# mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,4,6), random_state=125)
+#
+# ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
+# bagging = BaggingClassifier(base_estimator=bnb, n_estimators=100, random_state=123)
 
 clf = mnb
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33, random_state = 444)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33,random_state = 44)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)
 
 y_pred_class = clf.predict(X_test)
-
-# y_pred_class = clf.fit(X_train, y_train).predict_proba(X_test)
-# probs = y_pred_class.tolist()
-# print(probs)
-# print([(round(max(i)*5)) for i in probs])
-# print(y_test.tolist())
-# sys.exit("ok")
 
 accu = accuracy_score(y_pred_class, y_test)
 print(accu)
@@ -93,12 +85,19 @@ print(conf_matrix)
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
 
-# incorrects = np.nonzero(y_pred_class != y_test)
 incorrectly_zero = np.nonzero((y_pred_class != y_test) & (y_pred_class==0))
-df_incorrect = orig_df.ix[incorrectly_zero]
-print(df_incorrect)
+df_incorrect_zero = orig_df.ix[incorrectly_zero]
+# print(df_incorrect_zero)
+correctly_zero = np.nonzero((y_pred_class == y_test) & (y_pred_class==0))
+df_correct_zero = orig_df.ix[correctly_zero]
+df_next = df_correct_zero.append(df_incorrect_zero)
+print(df_next)
 
-# df_incorrect.loc[df_incorrect['orig_overall']==]
+
+
+# df_zero_class = df_incorrect_zero.append(orig_df.loc[orig_df['overall']==5])
+# print(df_zero_class)
+
 
 # y_test = np.asarray(y_test)
 # incorrect = np.where(y_test != y_pred_class)
