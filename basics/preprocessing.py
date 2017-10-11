@@ -96,12 +96,12 @@ def stemming(df):
     return df
 
 # input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/25.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/25.csv'
 # input_file= '/home/lia/Documents/the_project/dataset/musical_inst/helpful_en.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 # input_file = "/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv"
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/new_set/helpful_en.csv'
+input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/new_set/helpful_en.csv'
 
 orig_df = pd.read_csv(input_file)
 print(orig_df['overall'].value_counts().sort_index())

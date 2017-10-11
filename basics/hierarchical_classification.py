@@ -62,16 +62,21 @@ print(conf_matrix)
 incorrectly_zero = np.nonzero((y_pred_class != y_test) & (y_pred_class==0))
 correctly_zero = np.nonzero((y_pred_class == y_test) & (y_pred_class==0))
 df_temp = orig_df.ix[correctly_zero].append(orig_df.ix[incorrectly_zero])
+# df_temp['overall'] = np.where(df_temp['overall']<i, '0', i)
 
-# classify 4 and not 4 (1,2,3)
-for i in range(3):
+# classify 4 and not 4 (1,2,3) and so on
+for i in range(4,1,-1):
+    df_temp['overall'] = np.where(df_temp['orig_overall']==i, i, 0)
+
     X_data = df_temp['reviewText']
     y_data = df_temp['overall']
     X_dtm = vect.fit_transform(X_data.values.astype('U'))
 
+    print(df_temp['overall'].value_counts())
+
     X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.5,random_state = 44)
     print(X_dtm.toarray().shape)
-    
+
     clf.fit(X_train, y_train)
 
     y_pred_class = clf.predict(X_test)
@@ -85,3 +90,6 @@ for i in range(3):
     incorrectly_zero = np.nonzero((y_pred_class != y_test) & (y_pred_class==0))
     correctly_zero = np.nonzero((y_pred_class == y_test) & (y_pred_class==0))
     df_temp = orig_df.ix[correctly_zero].append(orig_df.ix[incorrectly_zero])
+
+    # print(df_temp.head(10))
+    # sys.exit("ok")
