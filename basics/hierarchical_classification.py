@@ -4,13 +4,8 @@ import re, string
 import sys
 
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier, AdaBoostClassifier,BaggingClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, HashingVectorizer
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn.neural_network import MLPClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import svm, grid_search
-from sklearn.svm import LinearSVC
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
@@ -74,7 +69,7 @@ for i in range(4,1,-1):
 
     print(df_temp['overall'].value_counts())
 
-    X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.5,random_state = 44)
+    X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.5,random_state = 23)
     print(X_dtm.toarray().shape)
 
     clf.fit(X_train, y_train)
@@ -92,4 +87,3 @@ for i in range(4,1,-1):
     df_temp = orig_df.ix[correctly_zero].append(orig_df.ix[incorrectly_zero])
 
     # print(df_temp.head(10))
-    # sys.exit("ok")

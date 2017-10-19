@@ -1,20 +1,21 @@
 # get the most reviewed films review Only
 import pandas as pd
-
+from langdetect import detect
 
 import time
 start_time = time.time()
 
-file_path = '/home/lia/Documents/the_project/dataset/to_use/movies_sm_fixed.csv'
+# file_path = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/helpful.csv'
+file_path = '/home/lia/Documents/the_project/dataset/top_10_movies/helpful_en.csv'
 
 df = pd.read_csv(file_path)
-s = df['asin'].value_counts().sort_values(ascending=False).head(50)
-
+s = df['asin'].value_counts().sort_values(ascending=False).head(5)
+print(s)
 #solution 1
 new_df = pd.DataFrame({'asin':s.index}).merge(df, how='left')
 print(new_df)
 
-output_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
+output_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_5.csv'
 new_df.to_csv(output_file, encoding="utf-8", sep=",", index=False)
 
 #solution 2

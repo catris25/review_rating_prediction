@@ -95,21 +95,39 @@ def stemming(df):
 
     return df
 
+def remove_titles(df):
+
+    title_list = ['firefly', 'lord of the rings', 'lotr', 'star wars', 'fellowship of the ring',
+    'star trek into darkness', 'star trek', 'brave', 'downton abbey', 'prometheus', 'frozen',
+    'avatar', 'movie', 'film', 'show']
+
+    df_notitle = []
+    for review in df['reviewText']:
+        notitle = review.lower()
+        for title in title_list:
+            notitle = notitle.replace(title, '')
+
+        df_notitle.append(notitle)
+
+    df['reviewText'] =  df_notitle
+    print(df['reviewText'].head(100))
+
+    # sys.exit("reeeee")
+    return df
+
 # input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
-# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/25.csv'
-# input_file= '/home/lia/Documents/the_project/dataset/musical_inst/helpful_en.csv'
-# input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/13.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
-# input_file = "/home/lia/Documents/the_project/dataset/musical_inst/helpful.csv"
-input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/new_set/helpful_en.csv'
 
 orig_df = pd.read_csv(input_file)
 print(orig_df['overall'].value_counts().sort_index())
 
-df = removing_punct(orig_df)
-# df = pos_tagging(df)
-# sys.exit("ok")
+df = orig_df
+print(df.head(5))
 
+df = remove_titles(df)
+df = removing_punct(df)
 df = stop_words_removal(df)
 # df = lemmatize(df)
 df = stemming(df)
