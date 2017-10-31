@@ -9,13 +9,13 @@ start_time = time.time()
 file_path = '/home/lia/Documents/the_project/dataset/top_10_movies/helpful_en.csv'
 
 df = pd.read_csv(file_path)
-s = df['asin'].value_counts().sort_values(ascending=False).head(5)
+s = df['asin'].value_counts().sort_values(ascending=False).head(1)
 print(s)
 #solution 1
 new_df = pd.DataFrame({'asin':s.index}).merge(df, how='left')
 print(new_df)
 
-output_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_5.csv'
+output_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_1.csv'
 new_df.to_csv(output_file, encoding="utf-8", sep=",", index=False)
 
 #solution 2

@@ -25,11 +25,26 @@ input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
 
 orig_df = pd.read_csv(input_file)
 
-orig_df['orig_overall'] = orig_df['overall']
+# orig_df['orig_overall'] = orig_df['overall']
 
-orig_df.loc[orig_df['overall'] <= 3 , 'overall'] = -10
-# orig_df.loc[orig_df['overall'] == 3 , 'overall'] = 0
-orig_df.loc[orig_df['overall'] > 3 , 'overall'] = 10
+
+# orig_df.loc[orig_df['overall'] == 1 , 'overall'] = 0
+# orig_df.loc[orig_df['overall'] == 5 , 'overall'] = 0
+
+orig_df.loc[orig_df['overall'] == 2 , 'overall'] = 0
+orig_df.loc[orig_df['overall'] == 3 , 'overall'] = 0
+orig_df.loc[orig_df['overall'] == 4 , 'overall'] = 0
+
+orig_df = orig_df[orig_df['overall'] != 0]
+
+# orig_df.loc[orig_df['overall'] == 1, 'overall'] = 10
+# orig_df.loc[orig_df['overall'] == 2, 'overall'] = 0
+# orig_df.loc[orig_df['overall'] == 3, 'overall'] = 0
+# orig_df.loc[orig_df['overall'] == 4, 'overall'] = 0
+# orig_df.loc[orig_df['overall'] == 5, 'overall'] = 10
+
+
+
 
 print(orig_df['overall'].value_counts().sort_index())
 print(orig_df.head(5))
@@ -40,7 +55,7 @@ X_data = orig_df['reviewText']
 y_data = orig_df['overall']
 
 # vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(1,3))
-vect = CountVectorizer(binary=True, min_df=5, ngram_range=(1,3))
+vect = CountVectorizer(binary=True, min_df=3)
 # vect = HashingVectorizer()
 
 X_dtm = vect.fit_transform(X_data.values.astype('U'))
@@ -55,7 +70,7 @@ bnb = BernoulliNB()
 clf = mnb
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.25,random_state = 64)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33,random_state = 33)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)

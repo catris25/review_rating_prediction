@@ -50,8 +50,12 @@ def pos_tagging(df):
 def stop_words_removal(df):
     df_filtering = []
     sw = set(stopwords.words("english"))
+
     stop_words = sw.union(["film", "movie", "movies", "films"])
-    # stop_words = sw
+    # stop_words = sw.remove("not")
+
+    # print(sorted(stop_words))
+    # sys.exit("ooo")
 
     for review in df['reviewText']:
         filtered_text = [word for word in review if not word in stop_words]
@@ -101,6 +105,9 @@ def remove_titles(df):
     'star trek into darkness', 'star trek', 'brave', 'downton abbey', 'prometheus', 'frozen',
     'avatar', 'movie', 'film', 'show']
 
+    title_list = title_list + ['oblivion', 'man of steel', 'hobbit', 'hobbits', 'an unexpected journey',
+    'gravity', 'flight', 'marvel', 'the avenger', 'world war z', 'argo', 'justified', 'season']
+
     df_notitle = []
     for review in df['reviewText']:
         notitle = review.lower()
@@ -115,9 +122,9 @@ def remove_titles(df):
     # sys.exit("reeeee")
     return df
 
-# input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/30percent/3.csv'
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/13.csv'
-# input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/1.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/helpful_en.csv'
+input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_3.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 
 orig_df = pd.read_csv(input_file)
@@ -126,7 +133,7 @@ print(orig_df['overall'].value_counts().sort_index())
 df = orig_df
 print(df.head(5))
 
-df = remove_titles(df)
+# df = remove_titles(df)
 df = removing_punct(df)
 df = stop_words_removal(df)
 # df = lemmatize(df)

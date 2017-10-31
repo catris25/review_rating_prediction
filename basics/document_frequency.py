@@ -26,32 +26,55 @@ for review in reviews:
 word_list = list(set(all_words))
 word_list.sort()
 
-# all_df = pd.DataFrame(word_list, columns=('word'))
 doc_freq_df = pd.DataFrame()
 doc_freq_df['word'] = word_list
+
 for rtg in ratings:
-    # print("\nrating %d stars"%rtg )
     data_per_class = df.loc[(df['overall'] == rtg)]
-
-    doc_freq = {}
     current_reviews = data_per_class['reviewText']
-
     d = []
+
     for word in word_list:
         freq = sum(1 for text in current_reviews if word in text)
         temp = freq/len(data_per_class)
-        # doc_freq[word] = temp
 
         d.append(temp)
 
+    # max_df_class = max(d)
+    #
+    # fr = []
+    # for i in d:
+    #     freq_rel = i/max_df_class
+    #     fr.append(freq_rel)
+
+    rtg = str(rtg)
+    rtg = "class_"+rtg
     doc_freq_df[rtg] = d
-
-    # all_df[rtg] = doc_freq
-    # print(doc_freq)
-
-
-
+    # doc_freq_df[rtg] = fr
 
 # find the biggest values
-doc_freq_df['max'] = doc_freq_df[[1,2,3,4,5]].idxmax(axis=1)
-print(doc_freq_df)
+doc_freq_df['max'] = doc_freq_df[['class_1','class_2','class_3','class_4','class_5']].idxmax(axis=1)
+print(doc_freq_df.head(50))
+
+# calculate the difference
+# new_df = doc_freq_df[[1,2,3,4,5]]
+new_df = doc_freq_df[['class_1','class_2','class_3','class_4','class_5']]
+
+threshold_val = 0.01
+
+
+for row in doc_freq_df.itertuples():
+    print(row.word)
+
+    val = [row.class_1, row.class_2, row.class_3, row.class_4, row.class_5]
+
+    for i in range(5):
+        for j in range(i,5):
+            temp = abs(val[i]-val[j])
+            if temp >= threshold_val:
+                print(temp)
+
+
+# NOTES
+# calculate the difference between word in c1, c2, c3, so on
+# calculate the df per max df in that class
