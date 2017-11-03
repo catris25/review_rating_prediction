@@ -14,10 +14,12 @@ print(new_df.head(100))
 # print(new_df['overall'].value_counts())
 
 
-new_df = new_df.loc[(new_df['overall'] >= 1) & (new_df['overall'] <= 5) & (new_df['overall']).is_integer()]
+new_df = new_df.loc[(new_df['overall'] == 1) | (new_df['overall'] == 2) | (new_df['overall'] == 3)
+| (new_df['overall'] == 4) | (new_df['overall'] == 5)]
 
 (new_df.reviewText).drop_duplicates()
 print(new_df['overall'].value_counts())
+
 # for i, row in new_df.iterrows():
 #     review = row['reviewText']
 #     lang = detect(str(review))

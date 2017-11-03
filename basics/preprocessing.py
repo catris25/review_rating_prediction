@@ -122,9 +122,9 @@ def remove_titles(df):
     # sys.exit("reeeee")
     return df
 
-# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/1.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/helpful_en.csv'
-input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_3.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_3.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 
 orig_df = pd.read_csv(input_file)

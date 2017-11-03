@@ -26,7 +26,8 @@ def sep_to_x_y(df):
 
     return X_data, y_data
 
-input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
+input_file = '/home/lia/Documents/the_project/dataset/output/clean_df.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/musical_inst/clean_data.csv'
 # input_file = "/home/lia/Documents/the_project/dataset/clean_airline_sentiments.csv"
 
@@ -42,7 +43,7 @@ X_data = orig_df['reviewText']
 y_data = orig_df['overall']
 
 # vect = TfidfVectorizer(binary=True, min_df=5, ngram_range=(1,3))
-vect = CountVectorizer(binary=True, min_df=3, ngram_range=(1,3))
+vect = CountVectorizer(binary=True, min_df=5, ngram_range=(1,1))
 # vect = HashingVectorizer()
 
 X_dtm = vect.fit_transform(X_data.values.astype('U'))
@@ -53,22 +54,21 @@ mnb = MultinomialNB()
 bnb = BernoulliNB()
 
 # knn = KNeighborsClassifier(n_neighbors=5)
-svr = svm.SVC(kernel='rbf',C=12.0,gamma=0.001)
 # svr = svm.SVC(kernel='linear',
 #             class_weight='balanced', # penalize
 #             probability=True)
-#
-logreg = linear_model.LogisticRegression(penalty="l2", C=1)
+
+# logreg = linear_model.LogisticRegression(penalty="l2", C=1)
 # rf = RandomForestClassifier(random_state=123)
-mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,5), random_state=125)
-#
+# mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,5), random_state=125)
+
 # ensemble_voting = VotingClassifier(estimators=[('logreg', logreg),('mnb', mnb),('svr', svr), ('mlp', mlp)], voting='hard')
 # bagging = BaggingClassifier(base_estimator=bnb, n_estimators=100, random_state=123)
 
 clf = mnb
 
 # SPLIT DATASET
-X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.33,random_state = 31)
+X_train, X_test, y_train, y_test = train_test_split(X_dtm, y_data, test_size=0.3,random_state = 41)
 
 # FIT INTO CLASSIFIER
 clf.fit(X_train, y_train)
