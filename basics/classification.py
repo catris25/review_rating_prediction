@@ -55,9 +55,9 @@ bnb = BernoulliNB()
 
 # knn = KNeighborsClassifier(n_neighbors=5)
 # svr = svm.SVC(kernel='linear',
-#             class_weight='balanced', # penalize
+#             class_weight='balanced',
 #             probability=True)
-
+# svr = svm.SVC(kernel='linear',class_weight=None,probability=True)
 # logreg = linear_model.LogisticRegression(penalty="l2", C=1)
 # rf = RandomForestClassifier(random_state=123)
 # mlp = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,5), random_state=125)
