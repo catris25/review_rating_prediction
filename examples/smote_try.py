@@ -34,44 +34,25 @@ pca = PCA(n_components=2)
 # Fit and transform x to visualise inside a 2D feature space
 X_vis = pca.fit_transform(X)
 
-# Apply regular SMOTE
-# kind = ['regular', 'borderline1', 'borderline2', 'svm']
-# kind = ['regular']
-# sm = [SMOTE(kind=k) for k in kind]
-# X_resampled = []
-# y_resampled = []
-# X_res_vis = []
-# for method in sm:
-#     X_res, y_res = method.fit_sample(X, y)
-#     X_resampled.append(X_res)
-#     y_resampled.append(y_res)
-#     X_res_vis.append(pca.transform(X_res))
-#     print(method)
-#     print(X_resampled)
-
-X_resampled = []
-y_resampled = []
-X_res_vis = []
 X_res, y_res = SMOTE(kind='regular').fit_sample(X, y)
-X_resampled.append(X_res)
-y_resampled.append(y_res)
-X_res_vis.append(pca.transform(X_res))
-# print(method)
-print(X_resampled)
+X_res_vis = pca.transform(X_res)
 
+print(X_res)
+
+# AFTER THIS I JUST DON'T SEEM TO UNDERSTAND WTF IS GOING ON
 
 # Two subplots, unpack the axes array immediately
+
 f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2)
-# Remove axis for second plot
+#
+# # Remove axis for second plot
 ax2.axis('off')
-ax_res = [ax3, ax4, ax5, ax6]
+#
+c0 = plot_resampling(ax1, X_vis, y, 'Original set')
 
-c0, c1 = plot_resampling(ax1, X_vis, y, 'Original set')
-for i in range(len(kind)):
-    plot_resampling(ax_res[i], X_res_vis[i], y_resampled[i],
-                    'SMOTE {}'.format(kind[i]))
+plot_resampling(ax3, X_res_vis, y_res,'SMOTE {}'.format('regular'))
 
-ax2.legend((c0, c1), ('Class #0', 'Class #1'), loc='center',
-           ncol=1, labelspacing=0.)
+# ax2.legend((c0, c1), ('Class #0', 'Class #1'), loc='center',
+#            ncol=1, labelspacing=0.)
 plt.tight_layout()
 plt.show()
