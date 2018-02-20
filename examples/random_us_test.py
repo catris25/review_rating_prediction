@@ -18,7 +18,7 @@ import pandas as pd
 # import sklearn.exceptions
 # warnings.filterwarnings("ignore", category=sklearn.exceptions.UndefinedMetricWarning)
 
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/3.csv'
 df = pd.read_csv(input_file)
 
 # categories = list(set(df['overall']))
