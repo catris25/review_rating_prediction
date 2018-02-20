@@ -2,8 +2,9 @@ import pandas as pd
 from sklearn import datasets
 from imblearn.datasets import make_imbalance
 from imblearn.over_sampling import SMOTE
-from sklearn.decomposition import PCA
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.neural_network import MLPClassifier
+from sklearn import linear_model
 from collections import Counter
 
 from sklearn import metrics
@@ -13,13 +14,13 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/3.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/7.csv'
 df = pd.read_csv(input_file)
 
 X_data = df['reviewText']
 y_data = df['overall']
 
-X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.5)
+X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.3)
 
 # count_vector= CountVectorizer(ngram_range=(1,1))
 vectorizer = CountVectorizer()
@@ -46,6 +47,8 @@ X_test = vectorizer.transform(X_test)
 
 # FIT INTO CLASSIFIER
 clf = MultinomialNB()
+# clf = linear_model.LogisticRegression()
+# clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3,7))
 clf.fit(X_res, y_res)
 
 y_pred_class = clf.predict(X_test)
@@ -58,3 +61,8 @@ print(conf_matrix)
 
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
+
+
+# interesting note to look at
+# X_train = vectorizer.fit_transform(data_train.data) #fit_transform on training data
+# X_test = vectorizer.transform(data_test.data) #just transform on test data
