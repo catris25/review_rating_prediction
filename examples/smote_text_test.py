@@ -32,19 +32,9 @@ vectorizer = CountVectorizer()
 X_train_vectorized = vectorizer.fit_transform(X_train)
 
 # OVERSAMPLE WITH SMOTE
-sm = SMOTE(ratio={2:700},random_state=42)
-# sm = SMOTE(ratio='minority')
+# sm = SMOTE(ratio={2:700},random_state=42)
+sm = SMOTE(ratio='all')
 X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
-
-sm = SMOTE(ratio={3:700},random_state=42)
-X_res, y_res = sm.fit_sample(X_res, y_res)
-
-sm = SMOTE(ratio={4:700},random_state=42)
-X_res, y_res = sm.fit_sample(X_res, y_res)
-
-sm = SMOTE(ratio={1:700},random_state=42)
-X_res, y_res = sm.fit_sample(X_res, y_res)
-
 
 # OVERSAMPLE WITH NAIVE RANDOM OVERSAMPLE
 # ros = RandomOverSampler(random_state=0)
