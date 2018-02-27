@@ -2,6 +2,7 @@ import preprocessing_step as prep
 
 from imblearn.datasets import make_imbalance
 from imblearn.over_sampling import SMOTE, RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
@@ -31,6 +32,18 @@ def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     print(report_matrix)
 
 
+# GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
+def ratio_dict(old_ratio):
+    new_ratio = {}
+
+    for i in range(1,len(old_ratio)):
+        new_ratio[i] = old_ratio[i]*2
+        if i==2:
+            new_ratio[i] = old_ratio[i]*4
+
+    return new_ratio
+
+
 def classify_nb(train_df, test_df):
     # READ TRAINING DATA AND SEPARATE INTO X AND y
     X_train = train_df['reviewText']
@@ -45,22 +58,35 @@ def classify_nb(train_df, test_df):
     X_train_vectorized = vectorizer.fit_transform(X_train)
     X_test_vectorized = vectorizer.transform(X_test)
 
+    # print(X_train_vectorized)
+
+    # Train and test data with NB classifier
     print('Original data {}'.format (Counter(y_train)))
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
+    # UNDERSAMPLE RANDOMLY
+    # rus = RandomUnderSampler(ratio={5:1300})
+    # X_res, y_res = rus.fit_sample(X_train_vectorized, y_train)
+    # X_train_vectorized, y_train = X_res, y_res
+
+
     # OVERSAMPLE WITH SMOTE
-    sm = SMOTE(ratio='all')
+    # sm = SMOTE(ratio={1:900, 2:400, 3:500, 4:650})
+    sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
     X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
 
     print('Original data {}'.format (Counter(y_train)))
     print('Resampled data {}'.format(Counter(y_res)))
 
+    # Train and test data with NB classifier
     X_train_vectorized, y_train = X_res, y_res
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/3.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/7.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
     # df = pd.read_csv(input_file)
     #
     # print("executing preprocessing step")
