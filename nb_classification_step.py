@@ -56,6 +56,7 @@ def classify_nb(train_df, test_df):
     y_test = test_df['overall']
 
     # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
+    # vectorizer = CountVectorizer()
     vectorizer = TfidfVectorizer()
     X_train_vectorized = vectorizer.fit_transform(X_train)
     X_test_vectorized = vectorizer.transform(X_test)
@@ -82,9 +83,8 @@ def classify_nb(train_df, test_df):
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/7.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/top_30_movies/helpful/helpful.csv'
     # df = pd.read_csv(input_file)
     #
     # print("executing preprocessing step")
@@ -94,7 +94,7 @@ def main():
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
-    train_df, test_df = train_test_split(prep_df, test_size=0.3)
+    train_df, test_df = train_test_split(prep_df, test_size=0.33)
 
     # USE prep_df AS TRAINING DATA AGAINST THE TESTING DATA
     classify_nb(train_df, test_df)
