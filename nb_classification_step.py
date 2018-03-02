@@ -84,14 +84,14 @@ def classify_nb(train_df, test_df):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
-    # df = pd.read_csv(input_file)
-    #
-    # print("executing preprocessing step")
-    # prep_df = prep.preprocess_data(df)
+    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
+    df = pd.read_csv(input_file)
 
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
-    prep_df = pd.read_csv(input_file)
+    print("executing preprocessing step")
+    prep_df = prep.preprocess_data(df)
+
+    # input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    # prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
     train_df, test_df = train_test_split(prep_df, test_size=0.33)

@@ -26,22 +26,51 @@ def tokenize_df(df):
 
 
 input_file='/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
 
 df = pd.read_csv(input_file)
 new_df = tokenize_df(df)
 
 print(new_df.describe())
+#
+data = new_df['word']
+#
+# plt.hist(data, bins=200)
+# plt.show()
 
-data = new_df['sentence']
+# def outliers_z_score(ys):
+#     threshold = 3
+#
+#     mean_y = np.mean(ys)
+#     stdev_y = np.std(ys)
+#     z_scores = [(y - mean_y) / stdev_y for y in ys]
+#     return np.where(np.abs(z_scores) > threshold)
+#
+# oz = outliers_z_score(data)
+# print(oz)
 
 # print('Number of words {}'.format (Counter(new_df['word'])))
 # print('Number of sentences {}'.format (Counter(new_df['sentence'])))
 
-labels, values = zip(*Counter(data).items())
+# labels, values = zip(*Counter(data).items())
+#
+# indexes = np.arange(len(labels))
+# width = 1
+#
+# plt.bar(indexes, values, width)
+# plt.xticks(indexes + width * 0.5, labels,rotation = "vertical")
+# plt.show()
 
-indexes = np.arange(len(labels))
-width = 1
+# for w in new_df['word']:
+#     if w<=10:
+#         print(w)
 
-plt.bar(indexes, values, width)
-plt.xticks(indexes + width * 0.5, labels,rotation = "vertical")
-plt.show()
+too_long = df.loc[new_df['word'] >= 1000, 'reviewText']
+too_short = df.loc[new_df['word'] <= 10, 'reviewText']
+print('too long:', len(too_long))
+print('too short:', len(too_short))
+
+del_id = too_long.index.append(too_short.index)
+temp_df = df.drop(df.index[[del_id]])
+
+temp_df.to_csv('/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv')
