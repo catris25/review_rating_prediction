@@ -19,7 +19,7 @@ print("Oversampling")
 
 # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/output/clean_df.csv'
-input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_30_raw.csv'
+input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
 
 df = pd.read_csv(input_file)
 
@@ -56,7 +56,8 @@ X_train_vectorized = vectorizer.fit_transform(X_train)
 X_test_vectorized = vectorizer.transform(X_test)
 
 # FIT INTO CLASSIFIER
-clf = MultinomialNB()
+# clf = MultinomialNB()
+clf = linear_model.LogisticRegression()
 
 # TRAIN THE CLASSIFIER WITH AVAILABLE TRAINING DATA
 clf.fit(X_train_vectorized, y_train)
@@ -72,14 +73,21 @@ print(conf_matrix)
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
 
+print(df.head())
+
 y_test = np.asarray(y_test)
 incorrect = np.where(y_test != y_pred_class)
-print(incorrect)
-test_df['prediction'] = y_pred_class
 
-df_incorrect = test_df.ix[incorrect]
-print(df_incorrect.head(10))
-print(set(df_incorrect['asin']))
+# print(df.loc[incorrect])
+# test_df['prediction'] = y_pred_class
+incorrectly_class = df.loc[incorrect]
+
+
+# df_incorrect = df.ix[incorrect]
+# df_incorrect['incorrect'] = y_pred_class
+# print(df_incorrect.head(10))
+
+# print(set(df_incorrect['asin']))
 
 
 

@@ -32,8 +32,8 @@ df = pd.read_csv(input_file)
 new_df = tokenize_df(df)
 
 print(new_df.describe())
-#
-data = new_df['word']
+print(new_df.head(10))
+# data = new_df['word']
 #
 # plt.hist(data, bins=200)
 # plt.show()
@@ -65,12 +65,17 @@ data = new_df['word']
 #     if w<=10:
 #         print(w)
 
+
 too_long = df.loc[new_df['word'] >= 1000, 'reviewText']
 too_short = df.loc[new_df['word'] <= 10, 'reviewText']
 print('too long:', len(too_long))
 print('too short:', len(too_short))
 
+df['word'] = new_df['word']
+
 del_id = too_long.index.append(too_short.index)
 temp_df = df.drop(df.index[[del_id]])
+
+print(temp_df.head(10))
 
 temp_df.to_csv('/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv')
