@@ -6,6 +6,7 @@ from imblearn.over_sampling import SMOTE, RandomOverSampler
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 from sklearn import linear_model
+from sklearn.feature_selection import SelectKBest, chi2
 from collections import Counter
 
 from sklearn import metrics
@@ -15,6 +16,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 
+def ratio_dict(old_ratio):
+    new_ratio = {}
+
+    for i in range(1,len(old_ratio)):
+        new_ratio[i] = old_ratio[i]*2
+        if i==2:
+            new_ratio[i] = old_ratio[i]*4
+
+    return new_ratio
+
+
 print("Oversampling")
 
 # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
@@ -23,12 +35,7 @@ input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean
 
 df = pd.read_csv(input_file)
 
-# DROP SOME FKING FILMS
-# salty_fan_films = ['B0000AQS0F', '0793906091', 'B0001VL0K2']
-# df = df[~(df.asin.isin(salty_fan_films))]
-
 # SPLIT INTO TRAINING AND TESTING
-# X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.3)
 
 train_df, test_df = train_test_split(df, test_size=0.33)
 
@@ -46,11 +53,21 @@ X_train_vectorized = vectorizer.fit_transform(X_train)
 
 # OVERSAMPLE WITH SMOTE
 # sm = SMOTE(ratio={2:700},random_state=42)
-# sm = SMOTE(ratio='all')
-# X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
-#
-# print('Original data {}'.format (Counter(y_train)))
-# print('Resampled data {}'.format(Counter(y_res)))
+sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
+X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
+
+print('Original data {}'.format (Counter(y_train)))
+print('Resampled data {}'.format(Counter(y_res)))
+
+X_train_vectorized, y_train = X_res, y_res
+
+# FEATURE SELECTION WITH chi2
+chi = SelectKBest(chi2)
+X_new = chi.fit_transform(X_train_vectorized, y_train)
+print(X_train_vectorized.shape)
+print(X_new.shape)
+
+X_train_vectorized = X_new
 
 # VECTORIZE X_test
 X_test_vectorized = vectorizer.transform(X_test)
@@ -72,23 +89,6 @@ print(conf_matrix)
 
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
-
-print(df.head())
-
-y_test = np.asarray(y_test)
-incorrect = np.where(y_test != y_pred_class)
-
-# print(df.loc[incorrect])
-# test_df['prediction'] = y_pred_class
-incorrectly_class = df.loc[incorrect]
-
-
-# df_incorrect = df.ix[incorrect]
-# df_incorrect['incorrect'] = y_pred_class
-# print(df_incorrect.head(10))
-
-# print(set(df_incorrect['asin']))
-
 
 
 # interesting note to look at
