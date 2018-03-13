@@ -88,7 +88,7 @@ def classify_nb(train_df, test_df):
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
     # FEATURE SELECTION
-    k = int(X_train_vectorized.shape[1]/2)
+    k = int(X_train_vectorized.shape[1]/3)
     selector = SelectKBest(chi2, k)
     X_select = selector.fit_transform(X_train_vectorized, y_train)
 
@@ -105,13 +105,14 @@ def classify_nb(train_df, test_df):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
+    # input_file = "/home/lia/Documents/the_project/dataset/to_use/clean.csv"
     # df = pd.read_csv(input_file)
     #
     # print("executing preprocessing step")
     # prep_df = prep.preprocess_data(df)
 
-    # input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
