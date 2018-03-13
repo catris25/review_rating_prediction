@@ -35,6 +35,9 @@ def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     report_matrix = metrics.classification_report(y_test, y_pred_class)
     print(report_matrix)
 
+    # incorrect = np.where(y_test != y_pred_class)
+    # return incorrect
+
 
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
 def ratio_dict(old_ratio):
@@ -96,31 +99,36 @@ def classify_nb(train_df, test_df):
     X_train_vectorized = X_select
     X_test_vectorized = selector.transform(X_test_vectorized)
 
-    classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    return incorrect
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/2.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
     # df = pd.read_csv(input_file)
     #
     # print("executing preprocessing step")
     # prep_df = prep.preprocess_data(df)
 
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
     train_df, test_df = train_test_split(prep_df, test_size=0.33)
 
+    # PRINT STATS OF DATA
     n_reviews = len(prep_df)
     n_movies = len(prep_df['asin'].value_counts())
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
 
-    # USE prep_df AS TRAINING DATA AGAINST THE TESTING DATA
-    classify_nb(train_df, test_df)
+    # PASS TO CLASSIFIER AND GATHER INFO OF THE MISCLASSIFIED DATA
+    incorrect = classify_nb(train_df, test_df)
 
+    # print("\nMISCLASSIFIED")
+    # incorrect_asin = prep_df.ix[incorrect]['asin'].value_counts()
+    # print(incorrect_asin)
 
 
 if __name__ == "__main__":
