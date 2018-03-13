@@ -107,15 +107,20 @@ def main():
     # print("executing preprocessing step")
     # prep_df = prep.preprocess_data(df)
 
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
     train_df, test_df = train_test_split(prep_df, test_size=0.33)
 
+    n_reviews = len(prep_df)
+    n_movies = len(prep_df['asin'].value_counts())
+    print(" %d reviews of %d movies"%(n_reviews, n_movies))
 
     # USE prep_df AS TRAINING DATA AGAINST THE TESTING DATA
     classify_nb(train_df, test_df)
+
 
 
 if __name__ == "__main__":
