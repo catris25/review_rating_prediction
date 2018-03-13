@@ -5,8 +5,9 @@ from imblearn.over_sampling import SMOTE, RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 
 from sklearn.naive_bayes import MultinomialNB
-from sklearn import linear_model
+from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 from sklearn import metrics
 
@@ -18,7 +19,7 @@ import numpy as np
 def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # FIT INTO CLASSIFIER
     # clf = MultinomialNB()
-    clf = linear_model.LogisticRegression()
+    clf = LogisticRegression()
 
     # TRAIN THE CLASSIFIER WITH AVAILABLE TRAINING DATA
     clf.fit(X_train_vectorized, y_train)
@@ -62,9 +63,8 @@ def classify_nb(train_df, test_df):
     X_train_vectorized = vectorizer.fit_transform(X_train)
     X_test_vectorized = vectorizer.transform(X_test)
 
-    # print(X_train_vectorized)
-
-    # Train and test data with NB classifier
+    # Train and test data with classifier
+    print("** CLASSIFICATION **")
     print('Original data {}'.format (Counter(y_train)))
     print('Testing data {}'. format(Counter(y_test)))
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
@@ -74,6 +74,7 @@ def classify_nb(train_df, test_df):
     sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
     X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
 
+    print("** SMOTE + CLASSIFICATION **")
     print('Original data {}'.format (Counter(y_train)))
     print('Resampled data {}'.format(Counter(y_res)))
     print('Testing data {}'. format(Counter(y_test)))
@@ -83,17 +84,31 @@ def classify_nb(train_df, test_df):
 
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
+    # FEATURE SELECTION
+    k = int(X_train_vectorized.shape[1]/2)
+    selector = SelectKBest(chi2, k)
+    X_select = selector.fit_transform(X_train_vectorized, y_train)
+
+    print("** SMOTE + FEATURE SELECTION + CLASSIFICATION **")
+    print(X_train_vectorized.shape)
+    print(X_select.shape)
+
+    X_train_vectorized = X_select
+    X_test_vectorized = selector.transform(X_test_vectorized)
+
+    classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
-    df = pd.read_csv(input_file)
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/2.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
+    # df = pd.read_csv(input_file)
+    #
+    # print("executing preprocessing step")
+    # prep_df = prep.preprocess_data(df)
 
-    print("executing preprocessing step")
-    prep_df = prep.preprocess_data(df)
-
-    # input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
-    # prep_df = pd.read_csv(input_file)
+    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
     train_df, test_df = train_test_split(prep_df, test_size=0.33)
