@@ -21,6 +21,9 @@ def get_helpful():
 def get_top_movies(df, n_movies):
     print("GETTING %d MOST REVIEWED MOVIES"%n_movies)
 
+    del_movies = ['B0000AQS0F', 'B0001VL0K2', '0793906091']
+    df = df[~df['asin'].isin(del_movies)]
+
     s = df['asin'].value_counts().sort_values(ascending=False).head(n_movies)
     print(s)
     new_df = pd.DataFrame({'asin':s.index}).merge(df, how='left')
@@ -32,11 +35,12 @@ def get_top_movies(df, n_movies):
 def remove_non_english(df):
     print("REMOVING NON ENGLISH REVIEWS")
 
-    for i, row in df.iterrows():
-        review = row['reviewText']
-        lang = detect(str(review))
-        if lang!='en':
-            df.drop(i, inplace=True)
+    df[df.reviewText.apply(lambda x : detect(x))!='en']
+    # for i, row in df.iterrows():
+    #     review = row['reviewText']
+    #     lang = detect(str(review))
+    #     if lang!='en':
+    #         df.drop(i, inplace=True)
 
     print(len(df))
 
@@ -81,11 +85,12 @@ def remove_short_long(df, min_words, max_words):
 
 # MAIN PROGRAM
 def main():
-    input_file = "/home/lia/Documents/the_project/dataset/to_use/full/helpful.csv"
+    input_file = "/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv"
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/1.csv'
     df = pd.read_csv(input_file)
     print(len(df))
 
-    temp = get_top_movies(df, 30)
+    temp = get_top_movies(df, 10)
     # temp = remove_non_english(temp)
     temp = remove_short_long(temp, 10, 1000)
 

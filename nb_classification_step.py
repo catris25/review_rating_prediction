@@ -72,10 +72,12 @@ def classify_nb(train_df, test_df):
     print('Testing data {}'. format(Counter(y_test)))
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-
     # OVERSAMPLE WITH SMOTE
     sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
     X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
+
+    # rus = RandomUnderSampler(ratio={5:1200})
+    # X_res, y_res = rus.fit_sample(X_res, y_res)
 
     print("** SMOTE + CLASSIFICATION **")
     print('Original data {}'.format (Counter(y_train)))
@@ -88,7 +90,8 @@ def classify_nb(train_df, test_df):
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
     # FEATURE SELECTION
-    k = int(X_train_vectorized.shape[1]/3)
+    k = int(X_train_vectorized.shape[1]/2)
+    # k = int(X_train_vectorized.shape[0]/10)
     selector = SelectKBest(chi2, k)
     X_select = selector.fit_transform(X_train_vectorized, y_train)
 
@@ -104,20 +107,20 @@ def classify_nb(train_df, test_df):
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
     # input_file = "/home/lia/Documents/the_project/dataset/to_use/clean.csv"
     # df = pd.read_csv(input_file)
-    #
+
     # print("executing preprocessing step")
     # prep_df = prep.preprocess_data(df)
 
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
-    train_df, test_df = train_test_split(prep_df, test_size=0.33)
+    train_df, test_df = train_test_split(prep_df, test_size=0.3)
 
     # PRINT STATS OF DATA
     n_reviews = len(prep_df)
