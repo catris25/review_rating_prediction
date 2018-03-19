@@ -1,7 +1,7 @@
 # 1. get 20 or 30 top film reviews
 # 2. separate on helpfulness
 # 3. remove non-english reviews
-# 4. remove irrelevant reviews (dvd not working, etc)
+# 4. remove irrelevant reviews (dvd not working, bluray, extended ver, etc)
 # 5. remove too short reviews
 
 # notes
@@ -21,8 +21,8 @@ def get_helpful():
 def get_top_movies(df, n_movies):
     print("GETTING %d MOST REVIEWED MOVIES"%n_movies)
 
-    del_movies = ['B0000AQS0F', 'B0001VL0K2', '0793906091']
-    df = df[~df['asin'].isin(del_movies)]
+    # del_movies = ['B0000AQS0F', 'B0001VL0K2', '0793906091']
+    # df = df[~df['asin'].isin(del_movies)]
 
     s = df['asin'].value_counts().sort_values(ascending=False).head(n_movies)
     print(s)
@@ -91,8 +91,8 @@ def main():
     print(len(df))
 
     temp = get_top_movies(df, 10)
-    # temp = remove_non_english(temp)
     temp = remove_short_long(temp, 10, 1000)
+    # temp = remove_non_english(temp)
 
     temp.to_csv("/home/lia/Documents/the_project/dataset/to_use/clean.csv")
 

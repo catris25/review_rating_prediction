@@ -104,31 +104,33 @@ def classify_nb(train_df, test_df):
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
     # FEATURE SELECTION
-    k = int(X_train_vectorized.shape[1]/2)
-    # k = int(X_train_vectorized.shape[0]/10)
-    selector = SelectKBest(chi2, k)
-    X_select = selector.fit_transform(X_train_vectorized, y_train)
-
-    print("** SMOTE + FEATURE SELECTION + CLASSIFICATION **")
-    print(X_train_vectorized.shape)
-    print(X_select.shape)
-
-    X_train_vectorized = X_select
-    X_test_vectorized = selector.transform(X_test_vectorized)
-
-    incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
-    return incorrect
+    # k = int(X_train_vectorized.shape[1]/2)
+    # # k = int(X_train_vectorized.shape[0]/10)
+    # selector = SelectKBest(chi2, k)
+    # X_select = selector.fit_transform(X_train_vectorized, y_train)
+    #
+    # print("** SMOTE + FEATURE SELECTION + CLASSIFICATION **")
+    # print(X_train_vectorized.shape)
+    # print(X_select.shape)
+    #
+    # X_train_vectorized = X_select
+    # X_test_vectorized = selector.transform(X_test_vectorized)
+    #
+    # incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    # return incorrect
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/8.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/8.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
+    input_file = "/home/lia/Documents/the_project/dataset/to_use/clean.csv"
     df = pd.read_csv(input_file)
 
     print("executing preprocessing step")
     prep_df = prep.preprocess_data(df)
 
     input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
@@ -139,6 +141,7 @@ def main():
     n_reviews = len(prep_df)
     n_movies = len(prep_df['asin'].value_counts())
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
+    print(prep_df['overall'].value_counts().sort_index())
 
     # PASS TO CLASSIFIER AND GATHER INFO OF THE MISCLASSIFIED DATA
     incorrect = classify_nb(train_df, test_df)
