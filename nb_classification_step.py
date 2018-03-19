@@ -43,10 +43,24 @@ def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
 def ratio_dict(old_ratio):
     new_ratio = {}
 
-    for i in range(1,len(old_ratio)):
-        new_ratio[i] = old_ratio[i]*2
-        if i==2:
-            new_ratio[i] = old_ratio[i]*3
+    max_r = max(old_ratio)
+
+    # LOOP THROUGH DICTIONARY ORDERED BY HIGHEST VALUE
+    for key in sorted(old_ratio, key=old_ratio.get, reverse=True):
+        if key == max_r:
+            curr_max = old_ratio[key]
+            new_ratio[key] = old_ratio[key]
+            continue
+        else:
+            diff = int(curr_max/old_ratio[key])
+            new_ratio[key] = old_ratio[key] * diff
+            curr_max = new_ratio[key]
+            print("%d. %d x %d = %d"%(key, diff, old_ratio[key], new_ratio[key]))
+
+    # for i in range(1,len(old_ratio)):
+    #     new_ratio[i] = old_ratio[i]*2
+    #     if i==2:
+    #         new_ratio[i] = old_ratio[i]*3
 
     return new_ratio
 
@@ -107,15 +121,14 @@ def classify_nb(train_df, test_df):
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
-    # input_file = "/home/lia/Documents/the_project/dataset/to_use/clean.csv"
-    # df = pd.read_csv(input_file)
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/8.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
+    df = pd.read_csv(input_file)
 
-    # print("executing preprocessing step")
-    # prep_df = prep.preprocess_data(df)
+    print("executing preprocessing step")
+    prep_df = prep.preprocess_data(df)
 
-    # input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
