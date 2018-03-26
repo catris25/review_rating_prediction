@@ -35,8 +35,8 @@ def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     report_matrix = metrics.classification_report(y_test, y_pred_class)
     print(report_matrix)
 
-    # incorrect = np.where(y_test != y_pred_class)
-    # return incorrect
+    incorrect = np.where(y_test != y_pred_class)
+    return incorrect
 
 
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
@@ -101,7 +101,7 @@ def classify_nb(train_df, test_df):
     # Train and test data with NB classifier
     X_train_vectorized, y_train = X_res, y_res
 
-    classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    # classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
     # FEATURE SELECTION
     # k = int(X_train_vectorized.shape[1]/2)
@@ -116,14 +116,14 @@ def classify_nb(train_df, test_df):
     # X_train_vectorized = X_select
     # X_test_vectorized = selector.transform(X_test_vectorized)
     #
-    # incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
-    # return incorrect
+    incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    return incorrect
 
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/8.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
-    input_file = "/home/lia/Documents/the_project/dataset/to_use/clean.csv"
+    input_file = "/home/lia/Documents/the_project/dataset/to_use/current/top_10.csv"
     df = pd.read_csv(input_file)
 
     print("executing preprocessing step")
@@ -146,9 +146,9 @@ def main():
     # PASS TO CLASSIFIER AND GATHER INFO OF THE MISCLASSIFIED DATA
     incorrect = classify_nb(train_df, test_df)
 
-    # print("\nMISCLASSIFIED")
-    # incorrect_asin = prep_df.ix[incorrect]['asin'].value_counts()
-    # print(incorrect_asin)
+    print("\nMISCLASSIFIED")
+    incorrect_asin = prep_df.ix[incorrect]['asin'].value_counts()
+    print(incorrect_asin)
 
 
 if __name__ == "__main__":

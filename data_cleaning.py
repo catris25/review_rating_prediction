@@ -85,7 +85,7 @@ def remove_short_long(df, min_words, max_words):
 
 # MAIN PROGRAM
 def main():
-    input_file = "/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv"
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/top_50.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/1.csv'
     df = pd.read_csv(input_file)
     print(len(df))
@@ -94,7 +94,7 @@ def main():
     temp = remove_short_long(temp, 10, 1000)
     # temp = remove_non_english(temp)
 
-    temp.to_csv("/home/lia/Documents/the_project/dataset/to_use/clean.csv")
+    temp.to_csv("/home/lia/Documents/the_project/dataset/to_use/current/top_10.csv")
 
 if __name__ == "__main__":
     main()

@@ -38,6 +38,10 @@ def stop_words_removal(df):
 
     stop_words = sw.union(["film", "movie", "movies", "films"])
 
+    # print(stop_words)
+    # import sys
+    # sys.exit("ok")
+
     for review in df['reviewText']:
         filtered_text = [word for word in review if not word in stop_words]
         df_filtering.append(filtered_text)
@@ -79,12 +83,12 @@ def preprocess_data(input_df):
     return df
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/6.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/clean.csv'
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    output_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
+    output_file = '/home/lia/Documents/the_project/dataset/output/musical_inst.csv'
     preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 

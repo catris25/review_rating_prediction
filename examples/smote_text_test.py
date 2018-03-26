@@ -19,25 +19,39 @@ from sklearn.model_selection import cross_val_score, cross_val_predict, train_te
 def ratio_dict(old_ratio):
     new_ratio = {}
 
-    for i in range(1,len(old_ratio)):
-        new_ratio[i] = old_ratio[i]*2
-        if i==2:
-            new_ratio[i] = old_ratio[i]*4
+    max_r = max(old_ratio)
+
+    # LOOP THROUGH DICTIONARY ORDERED BY HIGHEST VALUE
+    for key in sorted(old_ratio, key=old_ratio.get, reverse=True):
+        if key == max_r:
+            curr_max = old_ratio[key]
+            new_ratio[key] = old_ratio[key]
+            continue
+        else:
+            diff = int(curr_max/old_ratio[key])
+            new_ratio[key] = old_ratio[key] * diff
+            curr_max = new_ratio[key]
+            print("%d. %d x %d = %d"%(key, diff, old_ratio[key], new_ratio[key]))
 
     return new_ratio
 
 
 print("Oversampling")
 
-# input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
-input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
+# input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
 
 df = pd.read_csv(input_file)
 
+n_reviews = len(df)
+n_movies = len(df['asin'].value_counts())
+print(" %d reviews of %d movies"%(n_reviews, n_movies))
+print(df['overall'].value_counts().sort_index())
+
 # SPLIT INTO TRAINING AND TESTING
 
-train_df, test_df = train_test_split(df, test_size=0.33)
+train_df, test_df = train_test_split(df, test_size=0.25)
 
 X_train = train_df['reviewText']
 y_train = train_df['overall']
@@ -67,14 +81,14 @@ X_train_vectorized, y_train = X_res, y_res
 # FEATURE SELECTION
 # selector = VarianceThreshold(threshold=(.8 * (1 - .8)))
 # X_new = selector.fit_transform(X_train_vectorized)
-selector = SelectKBest(chi2, 6500)
-X_new = selector.fit_transform(X_train_vectorized, y_train)
-
-print(X_train_vectorized.shape)
-print(X_new.shape)
-
-X_train_vectorized = X_new
-X_test_vectorized = selector.transform(X_test_vectorized)
+# selector = SelectKBest(chi2, 6500)
+# X_new = selector.fit_transform(X_train_vectorized, y_train)
+#
+# print(X_train_vectorized.shape)
+# print(X_new.shape)
+#
+# X_train_vectorized = X_new
+# X_test_vectorized = selector.transform(X_test_vectorized)
 
 
 # FIT INTO CLASSIFIER
@@ -95,7 +109,16 @@ print(conf_matrix)
 report_matrix = metrics.classification_report(y_test, y_pred_class)
 print(report_matrix)
 
+print("\nMISCLASSIFIED")
+incorrect = np.where(y_test != y_pred_class)
+test_df = test_df.assign(predicted=y_pred_class)
 
+row_ids = test_df[test_df["overall"] != test_df['predicted']].index
+print(test_df.loc[row_ids][['reviewText', 'overall', 'predicted']])
+
+
+# incorrect_asin = df.ix[incorrect][['reviewText', 'overall']]
+# print(incorrect_asin)
 # interesting note to look at
 # X_train = vectorizer.fit_transform(data_train.data) #fit_transform on training data
 # X_test = vectorizer.transform(data_test.data) #just transform on test data
