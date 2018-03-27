@@ -25,7 +25,7 @@ def tokenize_df(df):
     return df_token
 
 
-input_file='/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+input_file='/home/lia/Documents/the_project/dataset/to_use/current/top_30.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6.csv'
 
 df = pd.read_csv(input_file)
@@ -77,5 +77,5 @@ del_id = too_long.index.append(too_short.index)
 temp_df = df.drop(df.index[[del_id]])
 
 print(temp_df.head(10))
-
-temp_df.to_csv('/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv')
+# 
+# temp_df.to_csv('/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv')

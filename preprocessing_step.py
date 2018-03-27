@@ -11,8 +11,35 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords, wordnet
 from nltk.classify import NaiveBayesClassifier
+from nltk.stem import WordNetLemmatizer
 
 # ---- PREPROCESSING STEP ----
+
+# Lemmatization
+def lemmatize(df):
+    df_lemma = []
+    wnl = WordNetLemmatizer()
+    for review in df['reviewText']:
+        tagged_text = nltk.tag.pos_tag(review.split())
+        # temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if tag != 'NNP' and tag != 'NNPS' and tag != 'NNS']
+        temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if not tag.startswith('N')]
+        temp = ' '.join(temp)
+
+        # print(review)
+        # print(temp)
+        #
+        #
+        # import sys
+        # sys.exit("ok")
+
+        df_lemma.append(temp)
+
+    df['reviewText'] = df_lemma
+    print(df['reviewText'].head(5))
+    print(sum([len(r) for r in df['reviewText']]))
+
+    return df
+
 # Punctuation removal, lowering capital letters, and tokenization
 def removing_punct(df):
     df_removal = []
@@ -72,6 +99,7 @@ def preprocess_data(input_df):
     print(df['overall'].value_counts().sort_index())
     print(df[['reviewText', 'overall']].head(5))
 
+    df = lemmatize(df)
     df = removing_punct(df)
     df = stop_words_removal(df)
     df = stemming(df)
@@ -83,12 +111,12 @@ def preprocess_data(input_df):
     return df
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/clean.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    output_file = '/home/lia/Documents/the_project/dataset/output/musical_inst.csv'
+    output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_10_clean.csv'
     preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 

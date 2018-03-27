@@ -38,7 +38,7 @@ def ratio_dict(old_ratio):
 
 print("Oversampling")
 
-input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/6_clean.csv'
+input_file = "/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv"
 # input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
 # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10_clean.csv'
 
@@ -62,7 +62,7 @@ print(X_train.head(10))
 
 # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
 # vectorizer = CountVectorizer()
-vectorizer = TfidfVectorizer()
+vectorizer = TfidfVectorizer(min_df=5)
 X_train_vectorized = vectorizer.fit_transform(X_train)
 
 # VECTORIZE X_test
@@ -114,7 +114,9 @@ incorrect = np.where(y_test != y_pred_class)
 test_df = test_df.assign(predicted=y_pred_class)
 
 row_ids = test_df[test_df["overall"] != test_df['predicted']].index
-print(test_df.loc[row_ids][['reviewText', 'overall', 'predicted']])
+new_df = test_df.loc[row_ids][['reviewText', 'overall', 'predicted']]
+print(new_df)
+# new_df.to_csv('/home/lia/Documents/the_project/dataset/to_use/current/top_30_incorrect.csv')
 
 
 # incorrect_asin = df.ix[incorrect][['reviewText', 'overall']]

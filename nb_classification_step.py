@@ -76,7 +76,7 @@ def classify_nb(train_df, test_df):
 
     # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
     # vectorizer = CountVectorizer()
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(min_df=2)
     X_train_vectorized = vectorizer.fit_transform(X_train)
     X_test_vectorized = vectorizer.transform(X_test)
 
@@ -121,21 +121,22 @@ def classify_nb(train_df, test_df):
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/30percent/8.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/helpful.csv'
-    input_file = "/home/lia/Documents/the_project/dataset/to_use/current/top_10.csv"
-    df = pd.read_csv(input_file)
-
-    print("executing preprocessing step")
-    prep_df = prep.preprocess_data(df)
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/20percent/3.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+    # input_file = "/home/lia/Documents/the_project/dataset/to_use/music_helpfulness/helpful.csv"
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30.csv'
+    # df = pd.read_csv(input_file)
+    #
+    # print("executing preprocessing step")
+    # prep_df = prep.preprocess_data(df)
 
     input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/output/temp_top_50.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
-    train_df, test_df = train_test_split(prep_df, test_size=0.3)
+    train_df, test_df = train_test_split(prep_df, test_size=0.4)
 
     # PRINT STATS OF DATA
     n_reviews = len(prep_df)
