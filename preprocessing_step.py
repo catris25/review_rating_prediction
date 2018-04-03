@@ -21,8 +21,8 @@ def lemmatize(df):
     wnl = WordNetLemmatizer()
     for review in df['reviewText']:
         tagged_text = nltk.tag.pos_tag(review.split())
-        # temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if tag != 'NNP' and tag != 'NNPS' and tag != 'NNS']
-        temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if not tag.startswith('N')]
+        temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if tag != 'NNP' and tag != 'NNPS']
+        # temp = [wnl.lemmatize(word, 'v') for word,tag in tagged_text if not tag.startswith('N')]
         temp = ' '.join(temp)
 
         # print(review)
@@ -99,7 +99,7 @@ def preprocess_data(input_df):
     print(df['overall'].value_counts().sort_index())
     print(df[['reviewText', 'overall']].head(5))
 
-    df = lemmatize(df)
+    # df = lemmatize(df)
     df = removing_punct(df)
     df = stop_words_removal(df)
     df = stemming(df)

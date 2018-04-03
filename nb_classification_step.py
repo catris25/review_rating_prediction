@@ -125,18 +125,19 @@ def main():
     # input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
     # input_file = "/home/lia/Documents/the_project/dataset/to_use/music_helpfulness/helpful.csv"
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/random_5000.csv'
     # df = pd.read_csv(input_file)
     #
     # print("executing preprocessing step")
     # prep_df = prep.preprocess_data(df)
 
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/temp_30.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/clean_large_data.csv'
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING
-    train_df, test_df = train_test_split(prep_df, test_size=0.4)
+    train_df, test_df = train_test_split(prep_df, test_size=0.3)
 
     # PRINT STATS OF DATA
     n_reviews = len(prep_df)

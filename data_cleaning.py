@@ -21,14 +21,26 @@ def get_helpful():
 def get_top_movies(df, n_movies):
     print("GETTING %d MOST REVIEWED MOVIES"%n_movies)
 
-    # del_movies = ['B0000AQS0F', 'B0001VL0K2', '0793906091']
-    # df = df[~df['asin'].isin(del_movies)]
+    # df_list = pd.read_csv('/home/lia/Documents/the_project/dataset/to_use/current/asin_list_avg.csv')
+    # mov_list = df_list['asin'].tolist()
+    # df = df[df['asin'].isin(mov_list)]
+    # print(df['asin'].value_counts())
 
     s = df['asin'].value_counts().sort_values(ascending=False).head(n_movies)
     print(s)
     new_df = pd.DataFrame({'asin':s.index}).merge(df, how='left')
 
     print(len(new_df))
+
+    return new_df
+
+def get_random_reviews(df, n_reviews):
+    print("GETTING %d RANDOM REVIEWS"%n_reviews)
+    new_df = df.sample(n_reviews)
+    #
+    # print(new_df)
+    # import sys
+    # sys.exit("ok")
 
     return new_df
 
@@ -86,15 +98,16 @@ def remove_short_long(df, min_words, max_words):
 # MAIN PROGRAM
 def main():
     input_file = '/home/lia/Documents/the_project/dataset/to_use/top_50.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/helpfulness/samples/10percent/1.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/full/helpful.csv'
     df = pd.read_csv(input_file)
     print(len(df))
 
-    temp = get_top_movies(df, 10)
-    temp = remove_short_long(temp, 10, 1000)
+    # temp = get_top_movies(df, 30)
+    temp = get_random_reviews(df, 5000)
+    # temp = remove_short_long(temp, 10, 1000)
     # temp = remove_non_english(temp)
 
-    temp.to_csv("/home/lia/Documents/the_project/dataset/to_use/current/top_10.csv")
+    temp.to_csv("/home/lia/Documents/the_project/dataset/to_use/current/random_5000.csv")
 
 if __name__ == "__main__":
     main()
