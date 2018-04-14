@@ -18,8 +18,8 @@ import numpy as np
 
 def classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # FIT INTO CLASSIFIER
-    # clf = MultinomialNB()
-    clf = LogisticRegression()
+    clf = MultinomialNB()
+    # clf = LogisticRegression()
 
     # TRAIN THE CLASSIFIER WITH AVAILABLE TRAINING DATA
     clf.fit(X_train_vectorized, y_train)
@@ -86,12 +86,9 @@ def classify_nb(train_df, test_df):
     print('Testing data {}'. format(Counter(y_test)))
     classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-    # OVERSAMPLE WITH SMOTE
-    sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
-    X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
-
-    # rus = RandomUnderSampler(ratio={5:1200})
-    # X_res, y_res = rus.fit_sample(X_res, y_res)
+    # OVERSAMPLE WITH UNPROPORTIONAL SMOTE
+    sm_unproportional = SMOTE(ratio='all')
+    X_res, y_res = sm_unproportional.fit_sample(X_train_vectorized, y_train)
 
     print("** SMOTE + CLASSIFICATION **")
     print('Original data {}'.format (Counter(y_train)))
@@ -101,23 +98,22 @@ def classify_nb(train_df, test_df):
     # Train and test data with NB classifier
     X_train_vectorized, y_train = X_res, y_res
 
-    # classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-    # FEATURE SELECTION
-    # k = int(X_train_vectorized.shape[1]/2)
-    # # k = int(X_train_vectorized.shape[0]/10)
-    # selector = SelectKBest(chi2, k)
-    # X_select = selector.fit_transform(X_train_vectorized, y_train)
+    # OVERSAMPLE WITH PROPORTIONAL SMOTE
+    # sm_proportional = SMOTE(ratio=ratio_dict(Counter(y_train)))
+    # X_res, y_res = sm_proportional.fit_sample(X_train_vectorized, y_train)
     #
-    # print("** SMOTE + FEATURE SELECTION + CLASSIFICATION **")
-    # print(X_train_vectorized.shape)
-    # print(X_select.shape)
+    # print("** SMOTE + CLASSIFICATION **")
+    # print('Original data {}'.format (Counter(y_train)))
+    # print('Resampled data {}'.format(Counter(y_res)))
+    # print('Testing data {}'. format(Counter(y_test)))
     #
-    # X_train_vectorized = X_select
-    # X_test_vectorized = selector.transform(X_test_vectorized)
+    # # Train and test data with NB classifier
+    # X_train_vectorized, y_train = X_res, y_res
     #
-    incorrect = classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
-    return incorrect
+    # classify_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    # return incorrect
 
 
 def main():
@@ -148,9 +144,9 @@ def main():
     # PASS TO CLASSIFIER AND GATHER INFO OF THE MISCLASSIFIED DATA
     incorrect = classify_nb(train_df, test_df)
 
-    print("\nMISCLASSIFIED")
-    incorrect_asin = prep_df.ix[incorrect]['asin'].value_counts()
-    print(incorrect_asin)
+    # print("\nMISCLASSIFIED")
+    # incorrect_asin = prep_df.ix[incorrect]['asin'].value_counts()
+    # print(incorrect_asin)
 
 
 if __name__ == "__main__":
