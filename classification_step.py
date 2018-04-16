@@ -31,12 +31,19 @@ def ratio_dict(old_ratio):
 
     return new_ratio
 
-# def oversample_smote(X_train_vectorized, y_train):
-#     # OVERSAMPLE WITH UNPROPORTIONAL SMOTE
-#     sm_unproportional = SMOTE(ratio='all')
-#     X_res, y_res = sm_unproportional.fit_sample(X_train_vectorized, y_train)
-#
-#     return (X_train_vectorized, y_train)
+def oversample_proportional(X_train_vectorized, y_train):
+    # OVERSAMPLE WITH PROPORTIONAL RATIO SMOTE
+    sm = SMOTE(ratio=ratio_dict(Counter(y_train)))
+    X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
+
+    return (X_res, y_res)
+
+def oversample_unproportional(X_train_vectorized, y_train):
+    # OVERSAMPLE WITH UNPROPORTIONAL SMOTE
+    sm = SMOTE(ratio='all')
+    X_res, y_res = sm.fit_sample(X_train_vectorized, y_train)
+
+    return (X_res, y_res)
 
 def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # FIT INTO CLASSIFIER
@@ -54,7 +61,7 @@ def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     print(conf_matrix)
 
     report_matrix = metrics.classification_report(y_test, y_pred_class)
-    print(report_matrix)
+    # print(report_matrix)
 
 def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # FIT INTO CLASSIFIER
@@ -72,7 +79,7 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
     print(conf_matrix)
 
     report_matrix = metrics.classification_report(y_test, y_pred_class)
-    print(report_matrix)
+    # print(report_matrix)
 
 def vectorize_data(X_train, X_test):
     # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
@@ -95,9 +102,23 @@ def classify_data(df):
     y_test = test_df['overall']
 
     X_train_vectorized, X_test_vectorized = vectorize_data(X_train, X_test)
+
+    print("Multinomial Naive Bayes")
     classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    print("Logistic Regression")
     classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
+    X_res, y_res = oversample_unproportional(X_train_vectorized, y_train)
+    print("Unproportional SMOTE + MNB")
+    classify_nb_report(X_res, y_res, X_test_vectorized, y_test)
+    print("Unproportional SMOTE + LogReg")
+    classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+
+    X_res, y_res = oversample_proportional(X_train_vectorized, y_train)
+    print("Proportional SMOTE + MNB")
+    classify_nb_report(X_res, y_res, X_test_vectorized, y_test)
+    print("Proportional SMOTE + LogReg")
+    classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
 
 def main():
