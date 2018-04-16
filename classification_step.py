@@ -83,7 +83,7 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
 
 def vectorize_data(X_train, X_test):
     # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
-    vectorizer = TfidfVectorizer(min_df=2)
+    vectorizer = TfidfVectorizer()
     X_train_vectorized = vectorizer.fit_transform(X_train)
     X_test_vectorized = vectorizer.transform(X_test)
 
@@ -120,9 +120,16 @@ def classify_data(df):
     print("Proportional SMOTE + LogReg")
     classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
+    print("Data ratio")
+    print('Original data {}'.format (Counter(y_train)))
+    print('Resampled data {}'.format(Counter(y_res)))
+    print('Testing data {}'. format(Counter(y_test)))
+
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/output/temp_30.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/without_five.csv'
+
     prep_df = pd.read_csv(input_file)
 
     # SPLIT INTO TRAINING AND TESTING

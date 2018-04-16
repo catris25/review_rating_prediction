@@ -111,12 +111,13 @@ def preprocess_data(input_df):
     return df
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/top_10_movies/top_10.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_25.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_10_clean.csv'
+    output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
     preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 
