@@ -2,6 +2,7 @@ import preprocessing_step as prep
 
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 from sklearn import metrics
@@ -45,6 +46,25 @@ def oversample_unproportional(X_train_vectorized, y_train):
 
     return (X_res, y_res)
 
+def classify_knn_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
+    # FIT INTO CLASSIFIER
+    clf = KNeighborsClassifier(n_neighbors=5)
+
+    # TRAIN THE CLASSIFIER WITH AVAILABLE TRAINING DATA
+    clf.fit(X_train_vectorized, y_train)
+
+    y_pred_class = clf.predict(X_test_vectorized)
+
+    accu = metrics.accuracy_score(y_test, y_pred_class)
+    print(accu)
+
+    conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
+    print(conf_matrix)
+
+    report_matrix = metrics.classification_report(y_test, y_pred_class)
+    # print(report_matrix)
+
+
 def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # FIT INTO CLASSIFIER
     clf = MultinomialNB()
@@ -77,9 +97,8 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
 
     conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
     print(conf_matrix)
-
+    
     report_matrix = metrics.classification_report(y_test, y_pred_class)
-    # print(report_matrix)
 
 def vectorize_data(X_train, X_test):
     # VECTORIZE AND FIT_TRANSFORM THE TRAINING DATA
@@ -108,26 +127,30 @@ def classify_data(df):
     print("Logistic Regression")
     classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-    X_res, y_res = oversample_unproportional(X_train_vectorized, y_train)
+    X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
     print("Unproportional SMOTE + MNB")
-    classify_nb_report(X_res, y_res, X_test_vectorized, y_test)
+    classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
     print("Unproportional SMOTE + LogReg")
-    classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
 
-    X_res, y_res = oversample_proportional(X_train_vectorized, y_train)
+    X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
     print("Proportional SMOTE + MNB")
-    classify_nb_report(X_res, y_res, X_test_vectorized, y_test)
+    classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
     print("Proportional SMOTE + LogReg")
-    classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
 
-    print("Data ratio")
-    print('Original data {}'.format (Counter(y_train)))
-    print('Resampled data {}'.format(Counter(y_res)))
-    print('Testing data {}'. format(Counter(y_test)))
+
+    print("\nDATA RATIO")
+    print('Training data \t{}'.format (Counter(y_train)))
+    print('Testing data \t{}'. format(Counter(y_test)))
+    print('Resampled training data')
+    print('Unproportional \t{}'.format(Counter(y_res_unp)))
+    print('Proportional \t{}'.format(Counter(y_res_p)))
+
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
     # input_file = '/home/lia/Documents/the_project/dataset/output/without_five.csv'
 
     prep_df = pd.read_csv(input_file)
@@ -141,7 +164,10 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    classify_data(prep_df)
+    # CLASSIFY THE DATA AND REPEAT IT 30 TIMES
+    for i in range(0,3):
+        print("ITERATION-%d"%i)
+        classify_data(prep_df)
 
 
 
