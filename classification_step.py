@@ -1,5 +1,3 @@
-import preprocessing_step as prep
-
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
@@ -48,20 +46,20 @@ def oversample_unproportional(X_train_vectorized, y_train):
 
     return (X_res, y_res)
 
-def write_classification_report(report):
-    report_data = []
-    lines = report.split('\n')
-    for line in lines[2:-3]:
-        row = {}
-        row_data = line.split('      ')
-        row['class'] = row_data[0]
-        row['precision'] = float(row_data[1])
-        row['recall'] = float(row_data[2])
-        row['f1_score'] = float(row_data[3])
-        row['support'] = float(row_data[4])
-        report_data.append(row)
-    df_report = pd.DataFrame.from_dict(report_data)
-    return df_report
+# def write_classification_report(report):
+#     report_data = []
+#     lines = report.split('\n')
+#     for line in lines[2:-3]:
+#         row = {}
+#         row_data = line.split('      ')
+#         row['class'] = row_data[0]
+#         row['precision'] = float(row_data[1])
+#         row['recall'] = float(row_data[2])
+#         row['f1_score'] = float(row_data[3])
+#         row['support'] = float(row_data[4])
+#         report_data.append(row)
+#     df_report = pd.DataFrame.from_dict(report_data)
+#     return df_report
 
 # MULTINOMIAL NAIVE BAYES
 def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
@@ -76,15 +74,9 @@ def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     accu = metrics.accuracy_score(y_test, y_pred_class)
     print(accu)
 
-    conf_matrix = metrics.confusion_matrix(y_test,y_pred_class, labels=[1,2,3,4,5])
+    conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
     print(conf_matrix)
-    df_conf_matrix = pd.DataFrame(conf_matrix)
-
-    # print("USING PANDAS")
-    # y_true = pd.Series(y_test, name="Actual")
-    # y_pred = pd.Series(y_pred_class, name="Predicted")
-    # df_confusion = pd.crosstab(y_true, y_pred)
-    # print (df_confusion)
+    df_conf_matrix = pd.DataFrame(conf_matrix, columns=[1,2,3,4,5])
 
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
@@ -106,7 +98,7 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
 
     conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
     print(conf_matrix)
-    df_conf_matrix = pd.DataFrame(conf_matrix)
+    df_conf_matrix = pd.DataFrame(conf_matrix, columns=[1,2,3,4,5])
 
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
@@ -122,7 +114,7 @@ def vectorize_data(X_train, X_test):
 
     return (X_train_vectorized, X_test_vectorized)
 
-def classify_data(df):
+def classify_data(df,i):
     # SPLIT INTO TRAINING AND TESTING
     train_df, test_df = train_test_split(df, test_size=0.3)
 
@@ -136,33 +128,35 @@ def classify_data(df):
 
     X_train_vectorized, X_test_vectorized = vectorize_data(X_train, X_test)
 
-    nb_results = []
-    logreg_results = []
     print("Multinomial Naive Bayes")
-    nb_results = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    nb = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
     print("Logistic Regression")
-    logreg_results = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    logreg = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-    # X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
-    # print("Unproportional SMOTE + MNB")
-    # nb_results.append(classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test))
-    # print("Unproportional SMOTE + LogReg")
-    # logreg_results.append(classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test))
+    X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
+    print("Unproportional SMOTE + MNB")
+    unp_smote_nb = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+    print("Unproportional SMOTE + LogReg")
+    unp_smote_logreg = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
 
     X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
     print("Proportional SMOTE + MNB")
-    nb_results.append(classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test))
+    p_smote_nb = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
     print("Proportional SMOTE + LogReg")
-    logreg_results.append(classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test))
+    p_smote_logreg = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+
+    # nb_df.append(pd.Series([np.nan]),ignore_index=True)[nb_df.columns]
+    # nb_df = pd.concat(nb_list)
+    # logreg_df = pd.concat(logreg_list)
 
     print("\nDATA RATIO")
     print('Training data \t{}'.format (Counter(y_train)))
     print('Testing data \t{}'. format(Counter(y_test)))
     print('Resampled training data')
-    # print('Unproportional \t{}'.format(Counter(y_res_unp)))
+    print('Unproportional \t{}'.format(Counter(y_res_unp)))
     print('Proportional \t{}'.format(Counter(y_res_p)))
 
-    return (nb_results, logreg_results)
+    return (nb, logreg, unp_smote_nb, unp_smote_logreg, p_smote_nb, p_smote_logreg)
 
 def main():
     input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
@@ -176,39 +170,53 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    nb_list = []
-    logreg_list = []
+    nb1_list = []
+    logreg1_list = []
 
-    unp_smote_nb_list = []
-    unp_smote_logreg_list = []
+    nb2_list = []
+    logreg2_list = []
 
-    p_smote_nb_list = []
-    p_smote_logreg_list = []
+    nb3_list = []
+    logreg3_list = []
+
     # CLASSIFY THE DATA AND REPEAT IT 30 TIMES
-    nb_list = []
-    logreg_list = []
-
-    nb_df = pd.DataFrame()
-    logreg_df = pd.DataFrame()
-
-    for i in range(0,2):
+    for i in range(0,10):
         print("**ITERATION-%d**"%i)
-        nb_temp, logreg_temp = classify_data(prep_df)
-        # print("nb")
-        # print(nb_temp)
-        # print("logreg")
-        # print(logreg_temp)
-        # nb_temp['iteration'] = 'iteration-{}'.format(i)
-        # logreg_temp['iteration'] = 'iteration-{}'.format(i)
-        # nb_df = nb_df.append(nb_temp)
-        # logreg_df = logreg_df.append(logreg_temp)
+        nb1, logreg1, nb2, logreg2, nb3, logreg3 = classify_data(prep_df,i)
 
-    # nb_df = pd.DataFrame(nb_list)
-    # logreg_df = pd.DataFrame(logreg_list)
+        nb1.insert(loc=0, column='iteration', value=i)
+        logreg1.insert(loc=0, column='iteration', value=i)
+        nb1_list.append(nb1)
+        logreg1_list.append(logreg1)
 
-    # nb_df.to_csv("/home/lia/Documents/the_project/nb.csv")
-    # logreg_df.to_csv("/home/lia/Documents/the_project/logreg.csv")
-    # print("file saved")
+        nb2.insert(loc=0, column='iteration', value=i)
+        logreg2.insert(loc=0, column='iteration', value=i)
+        nb2_list.append(nb2)
+        logreg2_list.append(logreg2)
+
+        nb3.insert(loc=0, column='iteration', value=i)
+        logreg3.insert(loc=0, column='iteration', value=i)
+        nb3_list.append(nb3)
+        logreg3_list.append(logreg3)
+
+    nb1_df = pd.concat(nb1_list)
+    logreg1_df = pd.concat(logreg1_list)
+
+    nb2_df = pd.concat(nb2_list)
+    logreg2_df = pd.concat(logreg2_list)
+
+    nb3_df = pd.concat(nb3_list)
+    logreg3_df = pd.concat(logreg3_list)
+
+    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv",index=False)
+    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv", index=False)
+
+    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv",index=False)
+    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv", index=False)
+
+    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv",index=False)
+    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv", index=False)
+    print("file saved")
 
 if __name__ == "__main__":
     main()
