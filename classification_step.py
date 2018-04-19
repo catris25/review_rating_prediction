@@ -76,9 +76,15 @@ def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     accu = metrics.accuracy_score(y_test, y_pred_class)
     print(accu)
 
-    conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
+    conf_matrix = metrics.confusion_matrix(y_test,y_pred_class, labels=[1,2,3,4,5])
     print(conf_matrix)
     df_conf_matrix = pd.DataFrame(conf_matrix)
+
+    # print("USING PANDAS")
+    # y_true = pd.Series(y_test, name="Actual")
+    # y_pred = pd.Series(y_pred_class, name="Predicted")
+    # df_confusion = pd.crosstab(y_true, y_pred)
+    # print (df_confusion)
 
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
@@ -149,7 +155,6 @@ def classify_data(df):
     print("Proportional SMOTE + LogReg")
     logreg_results.append(classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test))
 
-
     print("\nDATA RATIO")
     print('Training data \t{}'.format (Counter(y_train)))
     print('Testing data \t{}'. format(Counter(y_test)))
@@ -193,18 +198,17 @@ def main():
         # print(nb_temp)
         # print("logreg")
         # print(logreg_temp)
-        nb_df = nb_df.append(nb_temp)
-        logreg_df = logreg_df.append(logreg_temp)
+        # nb_temp['iteration'] = 'iteration-{}'.format(i)
+        # logreg_temp['iteration'] = 'iteration-{}'.format(i)
+        # nb_df = nb_df.append(nb_temp)
+        # logreg_df = logreg_df.append(logreg_temp)
 
     # nb_df = pd.DataFrame(nb_list)
     # logreg_df = pd.DataFrame(logreg_list)
 
-    # print("list")
-    # print(nb_df)
-    #
-    nb_df.to_csv("/home/lia/Documents/the_project/nb.csv")
-    logreg_df.to_csv("/home/lia/Documents/the_project/logreg.csv")
-    print("file saved")
+    # nb_df.to_csv("/home/lia/Documents/the_project/nb.csv")
+    # logreg_df.to_csv("/home/lia/Documents/the_project/logreg.csv")
+    # print("file saved")
 
 if __name__ == "__main__":
     main()
