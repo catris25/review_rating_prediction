@@ -19,7 +19,7 @@ def sum_all_matrices(matrix_list):
     print(sum_matrix)
     avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
     print(avg_accu)
-    
+
     return sum_matrix
 
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
@@ -200,39 +200,18 @@ def classify_data(df, n_loop):
         # END OF LOOP
 
     # SUM ALL THE MATRICES TO GET THE AVERAGE ACCURACY FROM MULTIPLE ITERATIONS
-    # MNB RESULT
+    # MNB RESULTS
     print("MultinomialNB, Unproportional SMOTE + MNB, Proportional SMOTE + MNB")
-    sum_matrix = sum_all_matrices(nb1_list)
-    print(sum_matrix)
+    nb1_sum = sum_all_matrices(nb1_list)
+    nb2_sum = sum_all_matrices(nb2_list)
+    nb3_sum = sum_all_matrices(nb3_list)
+    # LOGREG RESULTS
+    print("Logreg, Unproportional SMOTE + Logreg, Proportional SMOTE + Logreg")
+    logreg1_sum = sum_all_matrices(logreg1_list)
+    logreg2_sum = sum_all_matrices(logreg2_list)
+    logreg3_sum = sum_all_matrices(logreg3_list)
 
-    # nb2_sum = np.sum([df.iloc[:,0:5].values for df in nb2_list], axis=0)
-    # print(nb2_sum)
-    # avg_accu = sum(np.diag(nb2_sum))/nb2_sum.sum()
-    # print(avg_accu)
-    #
-    # nb3_sum = np.sum([df.iloc[:,0:5].values for df in nb3_list], axis=0)
-    # print(nb3_sum)
-    # avg_accu = sum(np.diag(nb3_sum))/nb3_sum.sum()
-    # print(avg_accu)
-    #
-    # #LOGREG RESULT
-    # print("LogisticRegression, Unproportional SMOTE + Logreg, Proportional SMOTE + Logreg")
-    # logreg1_sum = np.sum([df.iloc[:,0:5].values for df in logreg1_list], axis=0)
-    # print(logreg1_sum)
-    # avg_accu = sum(np.diag(logreg1_sum))/logreg1_sum.sum()
-    # print(avg_accu)
-    #
-    # logreg2_sum = np.sum([df.iloc[:,0:5].values for df in logreg2_list], axis=0)
-    # print(logreg2_sum)
-    # avg_accu = sum(np.diag(logreg2_sum))/logreg2_sum.sum()
-    # print(avg_accu)
-    #
-    # logreg3_sum = np.sum([df.iloc[:,0:5].values for df in logreg3_list], axis=0)
-    # print(logreg3_sum)
-    # avg_accu = sum(np.diag(logreg3_sum))/logreg3_sum.sum()
-    # print(avg_accu)
-
-    # CONCAT ALL THE DATAFRAMES
+    # CONCAT ALL THE DATAFRAMES INSIDE LISTS
     nb1_df = pd.concat(nb1_list)
     nb2_df = pd.concat(nb2_list)
     nb3_df = pd.concat(nb3_list)
