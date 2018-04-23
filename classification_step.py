@@ -8,6 +8,8 @@ from sklearn import metrics
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 
+from functools import reduce
+
 import pandas as pd
 import numpy as np
 
@@ -187,6 +189,13 @@ def classify_data(df, n_loop):
 
         # END OF LOOP
 
+    # SUM ALL MATRICS
+    # nb1_sum = nb1_list.sum(axis=0)
+    # print(nb1_sum)
+    # nb_sum = nb1_list[0].add(nb1_list[1], fill_value=0)
+    #
+    # print(nb_sum)
+
     # CONCAT ALL THE DATAFRAMES
     nb1_df = pd.concat(nb1_list)
     nb2_df = pd.concat(nb2_list)
@@ -195,13 +204,22 @@ def classify_data(df, n_loop):
     logreg2_df = pd.concat(logreg2_list)
     logreg3_df = pd.concat(logreg3_list)
 
+    my_df = pd.concat(nb1_list, keys=['df{}'.format(i+1) for i in range(len(nb1_list))])
+    print(my_df.sum(level=1))
+
+    df = reduce(lambda x, y: x.add(y, fill_value=0), nb1_list)
+    print (df)
+
+    res = np.sum([x.values for x in nb1_list], axis=0)
+    print(res)
+    
     # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
-    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
-    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
-    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
-    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
-    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    # nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
+    # nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
+    # nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
+    # logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
+    # logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
+    # logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
 
     # return (nb, logreg, unp_smote_nb, unp_smote_logreg, p_smote_nb, p_smote_logreg)
 
