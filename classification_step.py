@@ -20,7 +20,10 @@ def sum_all_matrices(matrix_list):
     avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
     print(avg_accu)
 
-    return sum_matrix
+    matrix_df = pd.DataFrame(sum_matrix, columns=[1,2,3,4,5])
+    # matrix_df.index = np.arange(1, len(matrix_df) + 1)
+    # matrix_df['iteration'] = 100
+    return matrix_df
 
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
 def ratio_dict(old_ratio):
@@ -241,7 +244,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 3
+    n_loop = 2
     classify_data(prep_df, n_loop)
 
 
