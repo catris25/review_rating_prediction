@@ -13,6 +13,15 @@ from functools import reduce
 import pandas as pd
 import numpy as np
 
+# SUM ALL MATRICES
+def sum_all_matrices(matrix_list):
+    sum_matrix = np.sum([df.iloc[:,0:5].values for df in matrix_list], axis=0)
+    print(sum_matrix)
+    avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
+    print(avg_accu)
+    
+    return sum_matrix
+
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS
 def ratio_dict(old_ratio):
     new_ratio = {}
@@ -133,6 +142,7 @@ def classify_data(df, n_loop):
     logreg3_list = []
 
     for i in range(0, n_loop):
+        print("ITERATION-%d"%i)
         # SPLIT INTO TRAINING AND TESTING
         train_df, test_df = train_test_split(df, test_size=0.3)
 
@@ -189,12 +199,38 @@ def classify_data(df, n_loop):
 
         # END OF LOOP
 
-    # SUM ALL MATRICS
-    # nb1_sum = nb1_list.sum(axis=0)
-    # print(nb1_sum)
-    # nb_sum = nb1_list[0].add(nb1_list[1], fill_value=0)
+    # SUM ALL THE MATRICES TO GET THE AVERAGE ACCURACY FROM MULTIPLE ITERATIONS
+    # MNB RESULT
+    print("MultinomialNB, Unproportional SMOTE + MNB, Proportional SMOTE + MNB")
+    sum_matrix = sum_all_matrices(nb1_list)
+    print(sum_matrix)
+
+    # nb2_sum = np.sum([df.iloc[:,0:5].values for df in nb2_list], axis=0)
+    # print(nb2_sum)
+    # avg_accu = sum(np.diag(nb2_sum))/nb2_sum.sum()
+    # print(avg_accu)
     #
-    # print(nb_sum)
+    # nb3_sum = np.sum([df.iloc[:,0:5].values for df in nb3_list], axis=0)
+    # print(nb3_sum)
+    # avg_accu = sum(np.diag(nb3_sum))/nb3_sum.sum()
+    # print(avg_accu)
+    #
+    # #LOGREG RESULT
+    # print("LogisticRegression, Unproportional SMOTE + Logreg, Proportional SMOTE + Logreg")
+    # logreg1_sum = np.sum([df.iloc[:,0:5].values for df in logreg1_list], axis=0)
+    # print(logreg1_sum)
+    # avg_accu = sum(np.diag(logreg1_sum))/logreg1_sum.sum()
+    # print(avg_accu)
+    #
+    # logreg2_sum = np.sum([df.iloc[:,0:5].values for df in logreg2_list], axis=0)
+    # print(logreg2_sum)
+    # avg_accu = sum(np.diag(logreg2_sum))/logreg2_sum.sum()
+    # print(avg_accu)
+    #
+    # logreg3_sum = np.sum([df.iloc[:,0:5].values for df in logreg3_list], axis=0)
+    # print(logreg3_sum)
+    # avg_accu = sum(np.diag(logreg3_sum))/logreg3_sum.sum()
+    # print(avg_accu)
 
     # CONCAT ALL THE DATAFRAMES
     nb1_df = pd.concat(nb1_list)
@@ -204,24 +240,15 @@ def classify_data(df, n_loop):
     logreg2_df = pd.concat(logreg2_list)
     logreg3_df = pd.concat(logreg3_list)
 
-    my_df = pd.concat(nb1_list, keys=['df{}'.format(i+1) for i in range(len(nb1_list))])
-    print(my_df.sum(level=1))
-
-    df = reduce(lambda x, y: x.add(y, fill_value=0), nb1_list)
-    print (df)
-
-    res = np.sum([x.values for x in nb1_list], axis=0)
-    print(res)
-    
     # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    # nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
-    # nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
-    # nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
-    # logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
-    # logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
-    # logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
+    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
+    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
+    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
+    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
+    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    print("file saved")
 
-    # return (nb, logreg, unp_smote_nb, unp_smote_logreg, p_smote_nb, p_smote_logreg)
 
 def main():
     input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
@@ -235,7 +262,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 2
+    n_loop = 3
     classify_data(prep_df, n_loop)
 
 

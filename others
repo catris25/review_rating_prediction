@@ -1,0 +1,8 @@
+
+my_df = pd.concat(nb1_list, keys=['df{}'.format(i+1) for i in range(len(nb1_list))])
+print(my_df.sum(level=1))
+
+df = reduce(lambda x, y: x.add(y, fill_value=0), nb1_list)
+print (df)
+
+nb1_sum = np.sum([df.iloc[:,0:5].values for df in nb1_list], axis=0)
