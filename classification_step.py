@@ -76,7 +76,9 @@ def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
 
     conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
     print(conf_matrix)
+
     df_conf_matrix = pd.DataFrame(conf_matrix, columns=[1,2,3,4,5])
+    df_conf_matrix.index = np.arange(1, len(df_conf_matrix) + 1)
 
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
@@ -98,7 +100,9 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
 
     conf_matrix = metrics.confusion_matrix(y_test,y_pred_class)
     print(conf_matrix)
+
     df_conf_matrix = pd.DataFrame(conf_matrix, columns=[1,2,3,4,5])
+    df_conf_matrix.index = np.arange(1, len(df_conf_matrix) + 1)
 
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
@@ -114,49 +118,92 @@ def vectorize_data(X_train, X_test):
 
     return (X_train_vectorized, X_test_vectorized)
 
-def classify_data(df,i):
-    # SPLIT INTO TRAINING AND TESTING
-    train_df, test_df = train_test_split(df, test_size=0.3)
+def classify_data(df, n_loop):
 
-    # READ TRAINING DATA AND SEPARATE INTO X AND y
-    X_train = train_df['reviewText']
-    y_train = train_df['overall']
+    # DECLARE LIST TO SAVE THE DATAFRAMES
+    nb1_list = []
+    logreg1_list = []
 
-    # READ TESTING DATA AND SEPARATE INTO X AND y
-    X_test = test_df['reviewText']
-    y_test = test_df['overall']
+    nb2_list = []
+    logreg2_list = []
 
-    X_train_vectorized, X_test_vectorized = vectorize_data(X_train, X_test)
+    nb3_list = []
+    logreg3_list = []
 
-    print("Multinomial Naive Bayes")
-    nb = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
-    print("Logistic Regression")
-    logreg = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+    for i in range(0, n_loop):
+        # SPLIT INTO TRAINING AND TESTING
+        train_df, test_df = train_test_split(df, test_size=0.3)
 
-    X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
-    print("Unproportional SMOTE + MNB")
-    unp_smote_nb = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
-    print("Unproportional SMOTE + LogReg")
-    unp_smote_logreg = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+        # READ TRAINING DATA AND SEPARATE INTO X AND y
+        X_train = train_df['reviewText']
+        y_train = train_df['overall']
 
-    X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
-    print("Proportional SMOTE + MNB")
-    p_smote_nb = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
-    print("Proportional SMOTE + LogReg")
-    p_smote_logreg = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+        # READ TESTING DATA AND SEPARATE INTO X AND y
+        X_test = test_df['reviewText']
+        y_test = test_df['overall']
 
-    # nb_df.append(pd.Series([np.nan]),ignore_index=True)[nb_df.columns]
-    # nb_df = pd.concat(nb_list)
-    # logreg_df = pd.concat(logreg_list)
+        # VECTORIZE THE DATA
+        X_train_vectorized, X_test_vectorized = vectorize_data(X_train, X_test)
 
-    print("\nDATA RATIO")
-    print('Training data \t{}'.format (Counter(y_train)))
-    print('Testing data \t{}'. format(Counter(y_test)))
-    print('Resampled training data')
-    print('Unproportional \t{}'.format(Counter(y_res_unp)))
-    print('Proportional \t{}'.format(Counter(y_res_p)))
+        # CALL EACH FUNCTION AND SAVE TO CORRESPONDING VARIABLE
+        print("Multinomial Naive Bayes")
+        nb = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+        print("Logistic Regression")
+        logreg = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
-    return (nb, logreg, unp_smote_nb, unp_smote_logreg, p_smote_nb, p_smote_logreg)
+        X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
+        print("Unproportional SMOTE + MNB")
+        unp_smote_nb = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+        print("Unproportional SMOTE + LogReg")
+        unp_smote_logreg = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+
+        X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
+        print("Proportional SMOTE + MNB")
+        p_smote_nb = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+        print("Proportional SMOTE + LogReg")
+        p_smote_logreg = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+
+        # ADD NEW COLUMN FOR EACH ITERATION AND APPEND TO THE LIST OF DATAFRAMES TO CORRESPONDING METHOD
+        nb['iteration'] = i
+        nb1_list.append(nb)
+        unp_smote_nb['iteration'] = i
+        nb2_list.append(unp_smote_nb)
+        p_smote_nb['iteration'] = i
+        nb3_list.append(p_smote_nb)
+
+        logreg['iteration'] = i
+        logreg1_list.append(logreg)
+        unp_smote_nb['iteration'] = i
+        logreg2_list.append(unp_smote_logreg)
+        p_smote_nb['iteration'] = i
+        logreg3_list.append(p_smote_logreg)
+
+        print("\nDATA RATIO")
+        print('Training data \t{}'.format (Counter(y_train)))
+        print('Testing data \t{}'. format(Counter(y_test)))
+        print('Resampled training data')
+        print('Unproportional \t{}'.format(Counter(y_res_unp)))
+        print('Proportional \t{}'.format(Counter(y_res_p)))
+
+        # END OF LOOP
+
+    # CONCAT ALL THE DATAFRAMES
+    nb1_df = pd.concat(nb1_list)
+    nb2_df = pd.concat(nb2_list)
+    nb3_df = pd.concat(nb3_list)
+    logreg1_df = pd.concat(logreg1_list)
+    logreg2_df = pd.concat(logreg2_list)
+    logreg3_df = pd.concat(logreg3_list)
+
+    # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
+    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
+    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
+    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
+    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
+    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
+    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+
+    # return (nb, logreg, unp_smote_nb, unp_smote_logreg, p_smote_nb, p_smote_logreg)
 
 def main():
     input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
@@ -170,53 +217,9 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    nb1_list = []
-    logreg1_list = []
+    n_loop = 2
+    classify_data(prep_df, n_loop)
 
-    nb2_list = []
-    logreg2_list = []
-
-    nb3_list = []
-    logreg3_list = []
-
-    # CLASSIFY THE DATA AND REPEAT IT 30 TIMES
-    for i in range(0,10):
-        print("**ITERATION-%d**"%i)
-        nb1, logreg1, nb2, logreg2, nb3, logreg3 = classify_data(prep_df,i)
-
-        nb1.insert(loc=0, column='iteration', value=i)
-        logreg1.insert(loc=0, column='iteration', value=i)
-        nb1_list.append(nb1)
-        logreg1_list.append(logreg1)
-
-        nb2.insert(loc=0, column='iteration', value=i)
-        logreg2.insert(loc=0, column='iteration', value=i)
-        nb2_list.append(nb2)
-        logreg2_list.append(logreg2)
-
-        nb3.insert(loc=0, column='iteration', value=i)
-        logreg3.insert(loc=0, column='iteration', value=i)
-        nb3_list.append(nb3)
-        logreg3_list.append(logreg3)
-
-    nb1_df = pd.concat(nb1_list)
-    logreg1_df = pd.concat(logreg1_list)
-
-    nb2_df = pd.concat(nb2_list)
-    logreg2_df = pd.concat(logreg2_list)
-
-    nb3_df = pd.concat(nb3_list)
-    logreg3_df = pd.concat(logreg3_list)
-
-    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv",index=False)
-    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv", index=False)
-
-    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv",index=False)
-    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv", index=False)
-
-    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv",index=False)
-    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv", index=False)
-    print("file saved")
 
 if __name__ == "__main__":
     main()
