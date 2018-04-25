@@ -185,9 +185,9 @@ def classify_data(df, n_loop):
 
         logreg['iteration'] = i
         logreg1_list.append(logreg)
-        unp_smote_nb['iteration'] = i
+        unp_smote_logreg['iteration'] = i
         logreg2_list.append(unp_smote_logreg)
-        p_smote_nb['iteration'] = i
+        p_smote_logreg['iteration'] = i
         logreg3_list.append(p_smote_logreg)
 
         print("\nDATA RATIO")
@@ -212,25 +212,25 @@ def classify_data(df, n_loop):
     logreg3_sum = sum_all_matrices(logreg3_list)
 
     # SAVE THE SUM RESULTS
-    # sum_df = pd.concat([nb1_sum, nb2_sum, nb3_sum, logreg1_sum, logreg2_sum, logreg3_sum])
-    # sum_df.to_csv("/home/lia/Documents/the_project/output/sum.csv")
-    #
-    # # CONCAT ALL THE DATAFRAMES INSIDE LISTS
-    # nb1_df = pd.concat(nb1_list)
-    # nb2_df = pd.concat(nb2_list)
-    # nb3_df = pd.concat(nb3_list)
-    # logreg1_df = pd.concat(logreg1_list)
-    # logreg2_df = pd.concat(logreg2_list)
-    # logreg3_df = pd.concat(logreg3_list)
-    #
-    # # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    # nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
-    # nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
-    # nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
-    # logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
-    # logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
-    # logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
-    # print("file saved")
+    sum_df = pd.concat([nb1_sum, nb2_sum, nb3_sum, logreg1_sum, logreg2_sum, logreg3_sum])
+    sum_df.to_csv("/home/lia/Documents/the_project/output/sum.csv")
+
+    # CONCAT ALL THE DATAFRAMES INSIDE LISTS
+    nb1_df = pd.concat(nb1_list)
+    nb2_df = pd.concat(nb2_list)
+    nb3_df = pd.concat(nb3_list)
+    logreg1_df = pd.concat(logreg1_list)
+    logreg2_df = pd.concat(logreg2_list)
+    logreg3_df = pd.concat(logreg3_list)
+
+    # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
+    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
+    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
+    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
+    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
+    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
+    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    print("file saved")
 
 
 def main():

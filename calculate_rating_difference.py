@@ -48,10 +48,15 @@ def calculate_rating(df):
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/output/main_result/logreg.csv'
+    file_folder = '/home/lia/Documents/the_project/output/main_result/'
+    input_file = '/home/lia/Documents/the_project/output/main_result/p_smote_logreg.csv'
     nb_df = pd.read_csv(input_file, index_col=0)
 
     calculate_rating(nb_df)
+
+    # NOTE TO SELF
+    # CALCULATE THE Z TEST
+    # THERE IS SOMETHING WRONG WITH SMOTE LOGREG PLS CHECK
 
 if __name__ == "__main__":
     main()
