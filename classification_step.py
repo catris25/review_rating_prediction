@@ -94,7 +94,7 @@ def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
 
-    return(df_conf_matrix)
+    return(df_conf_matrix, y_pred_class)
 
 # LOGISTIC REGRESSION
 def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
@@ -131,7 +131,7 @@ def vectorize_data(X_train, X_test):
 
 def classify_data(df, n_loop):
 
-    # DECLARE LIST TO SAVE THE DATAFRAMES
+    # DECLARE LISTS TO SAVE THE DATAFRAMES
     nb1_list = []
     logreg1_list = []
 
@@ -141,10 +141,20 @@ def classify_data(df, n_loop):
     nb3_list = []
     logreg3_list = []
 
+    # DECLARE LISTS TO SAVE y_pred_class
+    nb1_y = []
+    # review_id_list = test_df[['review_id']]
+    # movie_rating = []
+
     for i in range(0, n_loop):
         print("ITERATION-%d"%i)
         # SPLIT INTO TRAINING AND TESTING
         train_df, test_df = train_test_split(df, test_size=0.3)
+
+        # THE FOLLOWING IS A NEW PIECE OF CODE IN PROGRESS
+        # if i == 0:
+        #     new_df = test_df[['review_id', 'overall']].set_index('review_id').T.to_dict('list')
+        #     print(new_df)
 
         # READ TRAINING DATA AND SEPARATE INTO X AND y
         X_train = train_df['reviewText']
@@ -159,19 +169,19 @@ def classify_data(df, n_loop):
 
         # CALL EACH FUNCTION AND SAVE TO CORRESPONDING VARIABLE
         print("Multinomial Naive Bayes")
-        nb = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+        nb, nb_y = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
         print("Logistic Regression")
         logreg = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
         X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
         print("Unproportional SMOTE + MNB")
-        unp_smote_nb = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+        unp_smote_nb, unp_y = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
         print("Unproportional SMOTE + LogReg")
         unp_smote_logreg = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
 
         X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
         print("Proportional SMOTE + MNB")
-        p_smote_nb = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+        p_smote_nb, p_y = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
         print("Proportional SMOTE + LogReg")
         p_smote_logreg = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
 
@@ -197,6 +207,10 @@ def classify_data(df, n_loop):
         print('Unproportional \t{}'.format(Counter(y_res_unp)))
         print('Proportional \t{}'.format(Counter(y_res_p)))
 
+        # WORK IN PROGRESS
+        # APPEND ALL y_pred_class
+        nb1_y.append(nb_y)
+
         # END OF LOOP
 
     # SUM ALL THE MATRICES TO GET THE AVERAGE ACCURACY FROM MULTIPLE ITERATIONS
@@ -211,26 +225,30 @@ def classify_data(df, n_loop):
     logreg2_sum = sum_all_matrices(logreg2_list)
     logreg3_sum = sum_all_matrices(logreg3_list)
 
-    # SAVE THE SUM RESULTS
-    sum_df = pd.concat([nb1_sum, nb2_sum, nb3_sum, logreg1_sum, logreg2_sum, logreg3_sum])
-    sum_df.to_csv("/home/lia/Documents/the_project/output/sum.csv")
-
-    # CONCAT ALL THE DATAFRAMES INSIDE LISTS
-    nb1_df = pd.concat(nb1_list)
-    nb2_df = pd.concat(nb2_list)
-    nb3_df = pd.concat(nb3_list)
-    logreg1_df = pd.concat(logreg1_list)
-    logreg2_df = pd.concat(logreg2_list)
-    logreg3_df = pd.concat(logreg3_list)
-
-    # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
-    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
-    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
-    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
-    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
-    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
-    print("file saved")
+    # nb1_y = pd.DataFrame(list(zip(nb1_y)))
+    #
+    # nb1_y.groupby('review_id').agg(lambda x: x.tolist())
+    print(nb1_y)
+    # # SAVE THE SUM RESULTS
+    # sum_df = pd.concat([nb1_sum, nb2_sum, nb3_sum, logreg1_sum, logreg2_sum, logreg3_sum])
+    # sum_df.to_csv("/home/lia/Documents/the_project/output/sum.csv")
+    #
+    # # CONCAT ALL THE DATAFRAMES INSIDE LISTS
+    # nb1_df = pd.concat(nb1_list)
+    # nb2_df = pd.concat(nb2_list)
+    # nb3_df = pd.concat(nb3_list)
+    # logreg1_df = pd.concat(logreg1_list)
+    # logreg2_df = pd.concat(logreg2_list)
+    # logreg3_df = pd.concat(logreg3_list)
+    #
+    # # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
+    # nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
+    # nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
+    # nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
+    # logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
+    # logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
+    # logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    # print("file saved")
 
 
 def main():
