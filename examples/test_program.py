@@ -65,7 +65,8 @@ def classify_data(df, n_loop):
     # DECLARE LISTS TO SAVE y_pred_class
     nb1_y = []
     # review_id_list = test_df[['review_id']]
-    new_list = []
+    nb_y_list = []
+    lr_y_list = []
 
     for i in range(0, n_loop):
         print("ITERATION-%d"%i)
@@ -93,10 +94,6 @@ def classify_data(df, n_loop):
         print('Training data \t{}'.format (Counter(y_train)))
         print('Testing data \t{}'. format(Counter(y_test)))
 
-        # WORK IN PROGRESS
-        # print(test_df['review_id'])
-        # print(lr_y)
-
         # new_df.append(test_df[['review_id', 'overall']].set_index('review_id').T.to_dict('list'))
         # if i==0:
         #     new_list = zip(test_df['review_id'], nb_y)
@@ -104,21 +101,30 @@ def classify_data(df, n_loop):
         # else:
         #     for key, val in
 
-        new_list.extend([list(x) for x in zip(test_df['review_id'],nb_y)])
+        nb_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y)])
+        lr_y_list.extend([list(x) for x in zip(test_df['review_id'], lr_y)])
         # for f, b in zip(test_df['review_id'], lr_y):
         #     print(f, b)
 
         # END OF LOOP
 
-    dd = defaultdict(list)
-    for key, val in new_list:
-        dd[key].append(val)
-    print(dd)
+    # dd1 = defaultdict(list)
+    # for key, val in nb_y_list:
+    #     dd1[key].append(val)
+    # print(dd1)
+
+    dd2 = defaultdict(list)
+    for key, val in lr_y_list:
+        dd2[key].append(val)
+    print(dd2)
+
+    mydict = {k:float(sum(v))/len(v) for k, v in dd2.items()}
+    print(mydict)
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
 
     prep_df = pd.read_csv(input_file)
 
@@ -128,7 +134,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 3
+    n_loop = 5
     classify_data(prep_df, n_loop)
 
 
