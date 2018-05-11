@@ -60,6 +60,28 @@ def vectorize_data(X_train, X_test):
 
     return (X_train_vectorized, X_test_vectorized)
 
+def calculate_review_score(current_list):
+    dd = defaultdict(list)
+    for key, val in current_list:
+        dd[key].append(val)
+
+    avg_dict = {k:float(sum(v))/len(v) for k, v in dd.items()}
+    print(avg_dict)
+    return avg_dict
+
+def calculate_film_score(review_scores_dict, df):
+    # review_scores_df = pd.DataFrame(review_scores_list)
+
+    # cols = ['review_id', 'asin']
+    df['prediction'] = df['review_id'].map(review_scores_dict)
+    print(len(df))
+    new_df = df.dropna(how='any')
+    print(len(new_df))
+    avg_df = new_df.groupby('asin')['prediction'].mean()
+    print(avg_df)
+    # print(new_df['asin'].value_counts())
+
+
 def classify_data(df, n_loop):
 
     # DECLARE LISTS TO SAVE y_pred_class
@@ -113,18 +135,13 @@ def classify_data(df, n_loop):
     #     dd1[key].append(val)
     # print(dd1)
 
-    dd2 = defaultdict(list)
-    for key, val in lr_y_list:
-        dd2[key].append(val)
-    print(dd2)
-
-    mydict = {k:float(sum(v))/len(v) for k, v in dd2.items()}
-    print(mydict)
+    lr_score = calculate_review_score(lr_y_list)
+    film_scores = calculate_film_score(lr_score, df[['review_id', 'asin']])
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
 
     prep_df = pd.read_csv(input_file)
 
@@ -134,7 +151,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 5
+    n_loop = 3
     classify_data(prep_df, n_loop)
 
 
