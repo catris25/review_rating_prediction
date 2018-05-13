@@ -60,7 +60,7 @@ def vectorize_data(X_train, X_test):
 
     return (X_train_vectorized, X_test_vectorized)
 
-def calculate_review_score(current_list):
+def calculate_review_scores(current_list):
     dd = defaultdict(list)
     for key, val in current_list:
         dd[key].append(val)
@@ -69,8 +69,7 @@ def calculate_review_score(current_list):
     print(avg_dict)
     return avg_dict
 
-def calculate_film_score(review_scores_dict, df):
-    # df['prediction'] = df['review_id'].map(review_scores_dict)
+def calculate_film_scores(review_scores_dict, df):
     df = df.assign(prediction = df['review_id'].map(review_scores_dict))
 
     print(len(df))
@@ -86,15 +85,14 @@ def calculate_film_score(review_scores_dict, df):
     df_avg_actual = pd.DataFrame(avg_actual)
     print(df_avg_actual)
 
-    # df_comparison = df_avg_prediction.merge(df_avg_actual, on="asin", how = 'inner')
     df_comparison = pd.merge(df_avg_prediction, df_avg_actual, on="asin")
     print(df_comparison)
+
+    return df_comparison
 
 def classify_data(df, n_loop):
 
     # DECLARE LISTS TO SAVE y_pred_class
-    nb1_y = []
-    # review_id_list = test_df[['review_id']]
     nb_y_list = []
     lr_y_list = []
 
@@ -124,32 +122,18 @@ def classify_data(df, n_loop):
         print('Training data \t{}'.format (Counter(y_train)))
         print('Testing data \t{}'. format(Counter(y_test)))
 
-        # new_df.append(test_df[['review_id', 'overall']].set_index('review_id').T.to_dict('list'))
-        # if i==0:
-        #     new_list = zip(test_df['review_id'], nb_y)
-        #     new_dict = {key: value for (key, value) in new_list}
-        # else:
-        #     for key, val in
-
         nb_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y)])
         lr_y_list.extend([list(x) for x in zip(test_df['review_id'], lr_y)])
-        # for f, b in zip(test_df['review_id'], lr_y):
-        #     print(f, b)
 
         # END OF LOOP
 
-    # dd1 = defaultdict(list)
-    # for key, val in nb_y_list:
-    #     dd1[key].append(val)
-    # print(dd1)
-
-    lr_score = calculate_review_score(lr_y_list)
-    film_scores = calculate_film_score(lr_score, df[['review_id', 'asin', 'overall']])
+    lr_score = calculate_review_scores(lr_y_list)
+    film_scores = calculate_film_scores(lr_score, df[['review_id', 'asin', 'overall']])
 
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/output/clean_data.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/output/test_data.csv'
 
     prep_df = pd.read_csv(input_file)
 
