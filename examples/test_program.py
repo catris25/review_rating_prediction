@@ -70,17 +70,25 @@ def calculate_review_score(current_list):
     return avg_dict
 
 def calculate_film_score(review_scores_dict, df):
-    # review_scores_df = pd.DataFrame(review_scores_list)
+    # df['prediction'] = df['review_id'].map(review_scores_dict)
+    df = df.assign(prediction = df['review_id'].map(review_scores_dict))
 
-    # cols = ['review_id', 'asin']
-    df['prediction'] = df['review_id'].map(review_scores_dict)
     print(len(df))
     new_df = df.dropna(how='any')
     print(len(new_df))
-    avg_df = new_df.groupby('asin')['prediction'].mean()
-    print(avg_df)
-    # print(new_df['asin'].value_counts())
+    print(new_df.head(10))
 
+    avg_prediction = new_df['prediction'].groupby(new_df['asin']).mean().reset_index()
+    df_avg_prediction = pd.DataFrame(avg_prediction)
+    print(df_avg_prediction)
+
+    avg_actual = new_df['overall'].groupby(new_df['asin']).mean().reset_index()
+    df_avg_actual = pd.DataFrame(avg_actual)
+    print(df_avg_actual)
+
+    # df_comparison = df_avg_prediction.merge(df_avg_actual, on="asin", how = 'inner')
+    df_comparison = pd.merge(df_avg_prediction, df_avg_actual, on="asin")
+    print(df_comparison)
 
 def classify_data(df, n_loop):
 
@@ -136,7 +144,7 @@ def classify_data(df, n_loop):
     # print(dd1)
 
     lr_score = calculate_review_score(lr_y_list)
-    film_scores = calculate_film_score(lr_score, df[['review_id', 'asin']])
+    film_scores = calculate_film_score(lr_score, df[['review_id', 'asin', 'overall']])
 
 
 def main():
@@ -151,7 +159,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 3
+    n_loop = 5
     classify_data(prep_df, n_loop)
 
 
