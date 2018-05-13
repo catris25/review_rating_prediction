@@ -5,10 +5,42 @@ from sklearn.model_selection import cross_val_score, cross_val_predict, train_te
 from sklearn import metrics
 
 from imblearn.over_sampling import SMOTE
-from collections import Counter
+from collections import Counter, defaultdict
 
 import pandas as pd
 import numpy as np
+
+# CALCULATE SCORE PER REVIEW
+def calculate_review_scores(current_list):
+    dd = defaultdict(list)
+    for key, val in current_list:
+        dd[key].append(val)
+
+    avg_dict = {k:float(sum(v))/len(v) for k, v in dd.items()}
+    print(avg_dict)
+    return avg_dict
+
+# CALCULATE SCORE PER FILM
+def calculate_film_scores(review_scores_dict, df):
+    # MAP THE REVIEW SCORES TO ITS CORRESPONDING review_ids
+    df = df.assign(prediction = df['review_id'].map(review_scores_dict))
+    new_df = df.dropna(how='any')
+
+    # ACTUAL SCORE IS df OR new_df ONLY?
+    # df MEANS YOU TAKE ALL, new_df MEANS YOU TAKE THE PREDICTED ONLY
+    avg_prediction = new_df['prediction'].groupby(new_df['asin']).mean().reset_index()
+    df_avg_prediction = pd.DataFrame(avg_prediction)
+
+    avg_actual = new_df['overall'].groupby(new_df['asin']).mean().reset_index()
+    df_avg_actual = pd.DataFrame(avg_actual)
+
+    # avg_actual2 = df['overall'].groupby(df['asin']).mean().reset_index()
+    # print(avg_actual2)
+
+    df_comparison = pd.merge(df_avg_prediction, df_avg_actual, on="asin")
+    print(df_comparison)
+
+    return df_comparison
 
 # SUM ALL MATRICES
 def sum_all_matrices(matrix_list):
@@ -118,7 +150,7 @@ def classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_tes
     # report_matrix = metrics.classification_report(y_test, y_pred_class)
     # print(report_matrix)
 
-    return(df_conf_matrix)
+    return(df_conf_matrix, y_pred_class)
 
 # VECTORIZE DATA INTO A SPARSE MATRIX
 def vectorize_data(X_train, X_test):
@@ -131,7 +163,7 @@ def vectorize_data(X_train, X_test):
 
 def classify_data(df, n_loop):
 
-    # DECLARE LISTS TO SAVE THE DATAFRAMES
+    # DECLARE LISTS TO SAVE THE DATAFRAMES CONTAINING CONFUSION MATRICES
     nb1_list = []
     logreg1_list = []
 
@@ -142,19 +174,20 @@ def classify_data(df, n_loop):
     logreg3_list = []
 
     # DECLARE LISTS TO SAVE y_pred_class
-    nb1_y = []
-    # review_id_list = test_df[['review_id']]
-    # movie_rating = []
+    nb1_y_list = []
+    logreg1_y_list = []
 
+    nb2_y_list = []
+    logreg2_y_list = []
+
+    nb3_y_list = []
+    logreg3_y_list = []
+
+    # LOOPING
     for i in range(0, n_loop):
         print("ITERATION-%d"%i)
         # SPLIT INTO TRAINING AND TESTING
         train_df, test_df = train_test_split(df, test_size=0.3)
-
-        # THE FOLLOWING IS A NEW PIECE OF CODE IN PROGRESS
-        # if i == 0:
-        #     new_df = test_df[['review_id', 'overall']].set_index('review_id').T.to_dict('list')
-        #     print(new_df)
 
         # READ TRAINING DATA AND SEPARATE INTO X AND y
         X_train = train_df['reviewText']
@@ -171,21 +204,22 @@ def classify_data(df, n_loop):
         print("Multinomial Naive Bayes")
         nb, nb_y = classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
         print("Logistic Regression")
-        logreg = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
+        logreg, logreg_y = classify_logreg_report(X_train_vectorized, y_train, X_test_vectorized, y_test)
 
         X_res_unp, y_res_unp = oversample_unproportional(X_train_vectorized, y_train)
         print("Unproportional SMOTE + MNB")
-        unp_smote_nb, unp_y = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+        unp_smote_nb, unp_nb_y = classify_nb_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
         print("Unproportional SMOTE + LogReg")
-        unp_smote_logreg = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
+        unp_smote_logreg, unp_logreg_y = classify_logreg_report(X_res_unp, y_res_unp, X_test_vectorized, y_test)
 
         X_res_p, y_res_p = oversample_proportional(X_train_vectorized, y_train)
         print("Proportional SMOTE + MNB")
-        p_smote_nb, p_y = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+        p_smote_nb, p_nb_y = classify_nb_report(X_res_p, y_res_p, X_test_vectorized, y_test)
         print("Proportional SMOTE + LogReg")
-        p_smote_logreg = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
+        p_smote_logreg, p_logreg_y = classify_logreg_report(X_res_p, y_res_p, X_test_vectorized, y_test)
 
         # ADD NEW COLUMN FOR EACH ITERATION AND APPEND TO THE LIST OF DATAFRAMES TO CORRESPONDING METHOD
+        # TO SAVE CONFUSION MATRICS
         nb['iteration'] = i
         nb1_list.append(nb)
         unp_smote_nb['iteration'] = i
@@ -207,9 +241,15 @@ def classify_data(df, n_loop):
         print('Unproportional \t{}'.format(Counter(y_res_unp)))
         print('Proportional \t{}'.format(Counter(y_res_p)))
 
-        # WORK IN PROGRESS
-        # APPEND ALL y_pred_class
-        nb1_y.append(nb_y)
+        # APPEND ALL y_pred_class LISTS WITH THEIR CORRESPONDING review_id
+        nb1_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y)])
+        logreg1_y_list.extend([list(x) for x in zip(test_df['review_id'], logreg_y)])
+
+        nb2_y_list.extend([list(x) for x in zip(test_df['review_id'], unp_nb_y)])
+        logreg2_y_list.extend([list(x) for x in zip(test_df['review_id'], unp_logreg_y)])
+
+        nb3_y_list.extend([list(x) for x in zip(test_df['review_id'], p_nb_y)])
+        logreg3_y_list.extend([list(x) for x in zip(test_df['review_id'], p_logreg_y)])
 
         # END OF LOOP
 
@@ -225,10 +265,29 @@ def classify_data(df, n_loop):
     logreg2_sum = sum_all_matrices(logreg2_list)
     logreg3_sum = sum_all_matrices(logreg3_list)
 
+    # CALCULATE REVIEW SCORES AND FILM SCORES
+    logreg1_scores = calculate_review_scores(logreg1_y_list)
+    logreg1_film_scores = calculate_film_scores(logreg1_scores, df[['review_id', 'asin', 'overall']])
+
+    logreg2_scores = calculate_review_scores(logreg2_y_list)
+    logreg2_film_scores = calculate_film_scores(logreg2_scores, df[['review_id', 'asin', 'overall']])
+
+    logreg3_scores = calculate_review_scores(logreg3_y_list)
+    logreg3_film_scores = calculate_film_scores(logreg3_scores, df[['review_id', 'asin', 'overall']])
+
+    nb1_scores = calculate_review_scores(nb1_y_list)
+    nb1_film_scores = calculate_film_scores(nb1_scores, df[['review_id', 'asin', 'overall']])
+
+    nb2_scores = calculate_review_scores(nb2_y_list)
+    nb2_film_scores = calculate_film_scores(nb2_scores, df[['review_id', 'asin', 'overall']])
+
+    nb3_scores = calculate_review_scores(nb3_y_list)
+    nb3_film_scores = calculate_film_scores(nb3_scores, df[['review_id', 'asin', 'overall']])
+
     # nb1_y = pd.DataFrame(list(zip(nb1_y)))
     #
     # nb1_y.groupby('review_id').agg(lambda x: x.tolist())
-    print(nb1_y)
+    # print(nb1_y)
     # # SAVE THE SUM RESULTS
     # sum_df = pd.concat([nb1_sum, nb2_sum, nb3_sum, logreg1_sum, logreg2_sum, logreg3_sum])
     # sum_df.to_csv("/home/lia/Documents/the_project/output/sum.csv")
@@ -263,7 +322,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 3
+    n_loop = 10
     classify_data(prep_df, n_loop)
 
 
