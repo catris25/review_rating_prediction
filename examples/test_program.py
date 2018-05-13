@@ -122,6 +122,7 @@ def classify_data(df, n_loop):
         print('Training data \t{}'.format (Counter(y_train)))
         print('Testing data \t{}'. format(Counter(y_test)))
 
+        print(lr_y)
         nb_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y)])
         lr_y_list.extend([list(x) for x in zip(test_df['review_id'], lr_y)])
 
