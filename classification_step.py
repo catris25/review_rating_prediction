@@ -26,16 +26,11 @@ def calculate_film_scores(review_scores_dict, df):
     df = df.assign(prediction = df['review_id'].map(review_scores_dict))
     new_df = df.dropna(how='any')
 
-    # ACTUAL SCORE IS df OR new_df ONLY?
-    # df MEANS YOU TAKE ALL, new_df MEANS YOU TAKE THE PREDICTED ONLY
     avg_prediction = new_df['prediction'].groupby(new_df['asin']).mean().reset_index()
     df_avg_prediction = pd.DataFrame(avg_prediction)
 
-    avg_actual = new_df['overall'].groupby(new_df['asin']).mean().reset_index()
+    avg_actual = df['overall'].groupby(df['asin']).mean().reset_index()
     df_avg_actual = pd.DataFrame(avg_actual)
-
-    # avg_actual2 = df['overall'].groupby(df['asin']).mean().reset_index()
-    # print(avg_actual2)
 
     df_comparison = pd.merge(df_avg_prediction, df_avg_actual, on="asin")
     print(df_comparison)
@@ -322,7 +317,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 10
+    n_loop = 5
     classify_data(prep_df, n_loop)
 
 

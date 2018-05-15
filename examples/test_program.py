@@ -4,10 +4,40 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 from sklearn import metrics
 
+import scipy.stats as st
+
 from collections import Counter, defaultdict
 
 import pandas as pd
 import numpy as np
+
+# CALCULATE t SCORE
+def calculate_t_score(pop_list, samp_list):
+    n1 = len(samp_list)
+    n2 = len(pop_list)
+
+    mean1 = np.mean(samp_list)
+    mean2 = np.mean(pop_list)
+
+    std1 = np.std(samp_list, ddof=1)
+    std2 = np.std(pop_list, ddof=1)
+    var1 = std1**2
+    var2 = std2**2
+
+    standard_error = np.sqrt(((n1-1)*var1+(n2-1)*var2)/(n1+n2-2))
+    t_score = (mean1 - mean2)/(standard_error*(np.sqrt((1/n1)+(1/n2))))
+    prob = st.t.sf(np.abs(t_score), df=4)
+
+    print("t :",t_score)
+    print("p :",prob)
+
+    alpha = 0.05
+    if prob < alpha:
+        diff_significance = True
+    else:
+        diff_significance = False
+
+    return diff_significance
 
 # MULTINOMIAL NAIVE BAYES
 def classify_nb_report(X_train_vectorized, y_train, X_test_vectorized, y_test):
@@ -96,6 +126,9 @@ def classify_data(df, n_loop):
     nb_y_list = []
     lr_y_list = []
 
+    # DECLATE LISTS TO SAVE t_scores FOR EACH TESTING
+    significance_list = []
+
     for i in range(0, n_loop):
         print("ITERATION-%d"%i)
         # SPLIT INTO TRAINING AND TESTING
@@ -126,15 +159,20 @@ def classify_data(df, n_loop):
         nb_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y)])
         lr_y_list.extend([list(x) for x in zip(test_df['review_id'], lr_y)])
 
+        significance = calculate_t_score(lr_y, y_test)
+        significance_list.append(significance)
+
         # END OF LOOP
 
+    print(significance_list)
     lr_score = calculate_review_scores(lr_y_list)
     film_scores = calculate_film_scores(lr_score, df[['review_id', 'asin', 'overall']])
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/output/test_data.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/output/test_data.csv'
 
     prep_df = pd.read_csv(input_file)
 

@@ -10,28 +10,17 @@ def calculate_t_score(pop_list, samp_list):
     mean1 = np.mean(samp_list)
     mean2 = np.mean(pop_list)
 
-    var1 = np.var(samp_list,ddof=1)
-    # var1 = sum([(xi - mean1) ** 2 for xi in samp_list]) / (n1 - 1)
-    var2 = np.var(pop_list, ddof=1)
-
-    # print("VAR1",var1)
-    # print("VAR2",var2)
-
     std1 = np.std(samp_list, ddof=1)
     std2 = np.std(pop_list, ddof=1)
+    var1 = std1**2
+    var2 = std2**2
 
-    standard_error = np.sqrt(var1/n1 + var2/n2)
-    # standard_error = std1/np.sqrt(n1) + std2/np.sqrt(n2)
-    t_score = (mean1 - mean2)/standard_error
-    t_score = t_score * 2
-
+    standard_error = np.sqrt(((n1-1)*var1+(n2-1)*var2)/(n1+n2-2))
+    t_score = (mean1 - mean2)/(standard_error*(np.sqrt((1/n1)+(1/n2))))
     prob = st.t.sf(np.abs(t_score), df=4)
 
     print("t :",t_score)
     print("p :",prob)
-
-    # tstat, pvalue = ttest_ind_from_stats(mean1, std1, n1, mean2, std2, n2)
-    # print(pvalue)
 
     return(t_score, prob)
 
