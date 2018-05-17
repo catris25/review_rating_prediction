@@ -16,6 +16,8 @@ from collections import Counter, defaultdict
 import pandas as pd
 import numpy as np
 
+import os, time
+
 # GENERATE A DICTIONARY THAT WILL DECIDE HOW MANY RESAMPLES FOR EACH CLASS SHOULD GET
 # USED IN PROPORTIONAL OVERSAMPLING
 def ratio_dict(old_ratio):
@@ -111,6 +113,26 @@ def vectorize_data(X_train, X_test):
 
 # CLASSIFY THE DATA IN DATAFRAME
 def classify_data(df, n_loop):
+    # DECLARE LISTS TO SAVE THE DATAFRAMES CONTAINING CONFUSION MATRICES
+    nb1_list = []
+    logreg1_list = []
+
+    nb2_list = []
+    logreg2_list = []
+
+    nb3_list = []
+    logreg3_list = []
+
+    # DECLARE LISTS TO SAVE y_pred_class
+    nb1_y_list = []
+    logreg1_y_list = []
+
+    nb2_y_list = []
+    logreg2_y_list = []
+
+    nb3_y_list = []
+    logreg3_y_list = []
+
     # LOOPING
     for i in range(0, n_loop):
         print("ITERATION-%d"%i)
@@ -182,6 +204,10 @@ def classify_data(df, n_loop):
         # END OF LOOP
 
     # SAVE ALL RESULTS TO FILES
+    output_file = "/home/lia/Documents/the_project/output/"+time.strftime("%Y-%m-%d")+"/"
+    os.makedirs("%s"%output_file, exist_ok=True)
+    os.makedirs("%smatrices"%output_file, exist_ok=True)
+    os.makedirs("%sdata"%output_file, exist_ok=True)
 
     # SAVE CONFUSION MATRICES OF ALL CLASSIFICATIONS
     # CONCAT ALL THE DATAFRAMES INSIDE LISTS
@@ -193,13 +219,25 @@ def classify_data(df, n_loop):
     logreg3_df = pd.concat(logreg3_list)
 
     # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    nb1_df.to_csv("/home/lia/Documents/the_project/output/nb.csv")
-    nb2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_nb.csv")
-    nb3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_nb.csv")
-    logreg1_df.to_csv("/home/lia/Documents/the_project/output/logreg.csv")
-    logreg2_df.to_csv("/home/lia/Documents/the_project/output/unp_smote_logreg.csv")
-    logreg3_df.to_csv("/home/lia/Documents/the_project/output/p_smote_logreg.csv")
+    folder_name = output_file+"matrices/"
+    nb1_df.to_csv(folder_name+"nb.csv")
+    nb2_df.to_csv(folder_name+"unp_smote_nb.csv")
+    nb3_df.to_csv(folder_name+"p_smote_nb.csv")
+    logreg1_df.to_csv(folder_name+"logreg.csv")
+    logreg2_df.to_csv(folder_name+"unp_smote_logreg.csv")
+    logreg3_df.to_csv(folder_name+"p_smote_logreg.csv")
     print("confusion matrices all saved")
+
+    # SAVE REVIEW DATA WITH THEIR PREDICTED CLASSES
+    folder_name = output_file +"data/"
+    pd.DataFrame(nb1_y_list).to_csv(folder_name+"nb.csv")
+    pd.DataFrame(nb2_y_list).to_csv(folder_name+"unp_smote_nb.csv")
+    pd.DataFrame(nb3_y_list).to_csv(folder_name+"p_smote_nb.csv")
+    pd.DataFrame(logreg1_y_list).to_csv(folder_name+"logreg.csv")
+    pd.DataFrame(logreg2_y_list).to_csv(folder_name+"unp_smote_logreg.csv")
+    pd.DataFrame(logreg3_y_list).to_csv(folder_name+"p_smote_logreg.csv")
+    print("result dataframes all saved")
+
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
@@ -219,3 +257,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# NOTE
+# gotta put/combine the review_id, reviewText, and overall/actual to its prediction
+# number for each iteration
