@@ -240,6 +240,9 @@ def classify_data(df, n_loop):
     pd.DataFrame(logreg3_y_list, columns=col_list).to_csv(folder_name+"p_smote_logreg.csv", index=False)
     print("result dataframes all saved")
 
+    # SAVE ORIGINAL DATAFRAME FOR LATER REFERENCE
+    df.to_csv(output_file+"df.csv", index=False)
+
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
@@ -259,7 +262,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# NOTE
-# gotta put/combine the review_id, reviewText, and overall/actual to its prediction
-# number for each iteration
