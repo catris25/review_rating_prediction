@@ -193,17 +193,16 @@ def classify_data(df, n_loop):
 
         # APPEND ALL y_pred_class LISTS WITH THEIR CORRESPONDING review_id
         iteration = [i]*len(test_df)
-        nb1_y_list.append([list(x) for x in zip(test_df['review_id'], nb_y, iteration)])
-        logreg1_y_list.append([list(x) for x in zip(test_df['review_id'], logreg_y, iteration)])
+        nb1_y_list.extend([list(x) for x in zip(test_df['review_id'], nb_y, iteration)])
+        logreg1_y_list.extend([list(x) for x in zip(test_df['review_id'], logreg_y, iteration)])
 
-        nb2_y_list.append([list(x) for x in zip(test_df['review_id'], unp_nb_y, iteration)])
-        logreg2_y_list.append([list(x) for x in zip(test_df['review_id'], unp_logreg_y, iteration)])
+        nb2_y_list.extend([list(x) for x in zip(test_df['review_id'], unp_nb_y, iteration)])
+        logreg2_y_list.extend([list(x) for x in zip(test_df['review_id'], unp_logreg_y, iteration)])
 
-        nb3_y_list.append([list(x) for x in zip(test_df['review_id'], p_nb_y, iteration)])
-        logreg3_y_list.append([list(x) for x in zip(test_df['review_id'], p_logreg_y, iteration)])
+        nb3_y_list.extend([list(x) for x in zip(test_df['review_id'], p_nb_y, iteration)])
+        logreg3_y_list.extend([list(x) for x in zip(test_df['review_id'], p_logreg_y, iteration)])
 
         # END OF LOOP
-
 
     # SAVE ALL RESULTS TO FILES
     output_file = "/home/lia/Documents/the_project/output/"+time.strftime("%Y-%m-%d")+"/"
@@ -221,24 +220,24 @@ def classify_data(df, n_loop):
     logreg3_df = pd.concat(logreg3_list)
 
     # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    # folder_name = output_file+"matrices/"
-    # nb1_df.to_csv(folder_name+"nb.csv")
-    # nb2_df.to_csv(folder_name+"unp_smote_nb.csv")
-    # nb3_df.to_csv(folder_name+"p_smote_nb.csv")
-    # logreg1_df.to_csv(folder_name+"logreg.csv")
-    # logreg2_df.to_csv(folder_name+"unp_smote_logreg.csv")
-    # logreg3_df.to_csv(folder_name+"p_smote_logreg.csv")
-    # print("confusion matrices all saved")
+    folder_name = output_file+"matrices/"
+    nb1_df.to_csv(folder_name+"nb.csv")
+    nb2_df.to_csv(folder_name+"unp_smote_nb.csv")
+    nb3_df.to_csv(folder_name+"p_smote_nb.csv")
+    logreg1_df.to_csv(folder_name+"logreg.csv")
+    logreg2_df.to_csv(folder_name+"unp_smote_logreg.csv")
+    logreg3_df.to_csv(folder_name+"p_smote_logreg.csv")
+    print("confusion matrices all saved")
 
     # SAVE REVIEW DATA WITH THEIR PREDICTED CLASSES
     folder_name = output_file +"data/"
-    print(pd.DataFrame(nb1_y_list))
-    pd.DataFrame(nb1_y_list, columns=['review_id', 'prediction', 'iteration'], index=False).to_csv(folder_name+"nb.csv")
-    pd.DataFrame(nb2_y_list).to_csv(folder_name+"unp_smote_nb.csv")
-    pd.DataFrame(nb3_y_list).to_csv(folder_name+"p_smote_nb.csv")
-    pd.DataFrame(logreg1_y_list).to_csv(folder_name+"logreg.csv")
-    pd.DataFrame(logreg2_y_list).to_csv(folder_name+"unp_smote_logreg.csv")
-    pd.DataFrame(logreg3_y_list).to_csv(folder_name+"p_smote_logreg.csv")
+    col_list = ['review_id', 'prediction', 'iteration']
+    pd.DataFrame(nb1_y_list, columns=col_list).to_csv(folder_name+"nb.csv", index=False)
+    pd.DataFrame(nb2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_nb.csv", index=False)
+    pd.DataFrame(nb3_y_list, columns=col_list).to_csv(folder_name+"p_smote_nb.csv", index=False)
+    pd.DataFrame(logreg1_y_list, columns=col_list).to_csv(folder_name+"logreg.csv", index=False)
+    pd.DataFrame(logreg2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_logreg.csv", index=False)
+    pd.DataFrame(logreg3_y_list, columns=col_list).to_csv(folder_name+"p_smote_logreg.csv", index=False)
     print("result dataframes all saved")
 
 
