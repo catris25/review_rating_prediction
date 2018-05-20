@@ -256,7 +256,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 3
+    n_loop = 10
     classify_data(prep_df, n_loop)
 
 
