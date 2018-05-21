@@ -8,6 +8,7 @@ import scipy.stats as st
 
 import os
 
+# CALCULATE THE T-SCORE AND PROBABILITY VALUE
 def calculate_t_score(pop_list, samp_list):
     n1 = len(samp_list)
     n2 = len(pop_list)
@@ -37,6 +38,7 @@ def main():
     input_file = '/home/lia/Documents/the_project/output/2018-05-20/df.csv'
     df = pd.read_csv(input_file)
 
+    # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
     for i in range(0, len(list_files)):
         input_file = input_dir+list_files[i]
         print(list_files[i])
@@ -45,6 +47,7 @@ def main():
         pred_df = df[['review_id', 'asin', 'overall']].merge(pred_df, left_on='review_id', right_on='review_id')
         pred_df = pred_df.rename(columns = {'overall':'actual'})
 
+        # FOR EVERY ITERATION, CALCULATE THE T-SCORE AND PROBABILITY
         for j in range(0, pred_df['iteration'].nunique()):
             current_df = pred_df[pred_df['iteration']==j]
             prediction_list = current_df['prediction'].tolist()
