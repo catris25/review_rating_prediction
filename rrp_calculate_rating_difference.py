@@ -68,19 +68,13 @@ def calculate_rating(df):
         t_score, prob = calculate_t_score(prediction_list, actual_list)
 
 # SUM ALL MATRICES
-def sum_all_matrices(matrix_list):
+def sum_all_matrices(matrix_df):
     # print(matrix_list[matrix_list['iteration']==i] for i in matrix_list[['iteration']].nunique())
-    matrix = matrix_list[['1','2','3','4','5']]
+    matrices = matrix_df[['1', '2', '3', '4', '5', 'iteration']]
 
-    # data = matrix_list[['1', '2', '3', '4', '5', 'iteration']].values.tolist()
-    # print(data)
-
-    print(np.sum([matrix[matrix_list['iteration']==i] for i in range(0,9)], axis=0))
-    print(set(matrix_list['iteration'].tolist()))
-
-    import sys
-    sys.exit("ok")
-
+    d = matrices.set_index('iteration')
+    sum_matrix = np.sum(d.loc[i].values for i in d.index.drop_duplicates().values)
+    
     print(sum_matrix)
     avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
     print(avg_accu)
