@@ -1,8 +1,16 @@
+# LIA RISTIANA 2018
+# This file calculates the t_score to compare the significance of difference
+# between the actual and predicted values of reviews in each loop.
+
 import pandas as pd
 import numpy as np
+
 import scipy.stats as st
 from scipy.stats import ttest_ind_from_stats
 
+import os
+
+# CALCULATE THE T-SCORE AND PROBABILITY VALUE
 def calculate_t_score(pop_list, samp_list):
     n1 = len(samp_list)
     n2 = len(pop_list)
@@ -59,12 +67,45 @@ def calculate_rating(df):
 
         t_score, prob = calculate_t_score(prediction_list, actual_list)
 
+# SUM ALL MATRICES
+def sum_all_matrices(matrix_list):
+    # print(matrix_list[matrix_list['iteration']==i] for i in matrix_list[['iteration']].nunique())
+    matrix = matrix_list[['1','2','3','4','5']]
+
+    # data = matrix_list[['1', '2', '3', '4', '5', 'iteration']].values.tolist()
+    # print(data)
+
+    print(np.sum([matrix[matrix_list['iteration']==i] for i in range(0,9)], axis=0))
+    print(set(matrix_list['iteration'].tolist()))
+
+    import sys
+    sys.exit("ok")
+
+    print(sum_matrix)
+    avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
+    print(avg_accu)
+
+    matrix_df = pd.DataFrame(sum_matrix, columns=[1,2,3,4,5])
+    # matrix_df.index = np.arange(1, len(matrix_df) + 1)
+    # matrix_df['iteration'] = 100
+    return matrix_df
 
 def main():
-    input_file = '/home/lia/Documents/the_project/output/main_result/sum.csv'
-    nb_df = pd.read_csv(input_file, index_col=0)
+    input_dir = '/home/lia/Documents/the_project/output/2018-05-20/matrices/'
+    list_files = os.listdir(input_dir)
 
-    calculate_rating(nb_df)
+    # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
+    for i in range(0, len(list_files)):
+        input_file = input_dir+list_files[i]
+        print(list_files[i])
+        matrices_df = pd.read_csv(input_file)
+        print(matrices_df)
+
+        sum_all_matrices(matrices_df)
+
+
+
+    # calculate_rating(nb_df)
 
 if __name__ == "__main__":
     main()
