@@ -32,56 +32,43 @@ def calculate_t_score(pop_list, samp_list):
 
     return(t_score, prob)
 
-def calculate_rating(df):
-    i_length = len(df['iteration'].value_counts())
+def calculate_rating(current_matrix):
+    # GET ACTUAL SCORE BY LOOPING THROUGH THE ROWS
+    actual_list = []
+    for ind, row in current_matrix.iterrows():
+        row_sum = row.sum()
+        row_value = row_sum * ind
+        # print("%d x %d = %d"%(row_sum, ind, row_value))
 
-    for i in range(0, i_length):
-        print("ITERATION-%d"%i)
+        actual_list.append(row_value)
 
-        current_matrix = df[df['iteration'] == i]
-        current_matrix = current_matrix.drop('iteration', 1)
-        current_matrix.index = np.arange(1, len(current_matrix) + 1)
-        print(current_matrix)
+    sum_actual = sum(actual_list)
 
-        # GET ACTUAL SCORE BY LOOPING THROUGH THE ROWS
-        actual_list = []
-        for ind, row in current_matrix.iterrows():
-            row_sum = row.sum()
-            row_value = row_sum * ind
-            # print("%d x %d = %d"%(row_sum, ind, row_value))
+    # GET PREDICTION SCORE BY LOOPING THROUGH THE columns
+    prediction_list = []
+    for colname, col in current_matrix.iteritems():
+        column_sum = col.sum()
+        column_value = int(colname) * column_sum
+        # print("%d x %d = %d"%(column_sum, int(colname), column_value))
 
-            actual_list.append(row_value)
+        prediction_list.append(column_value)
 
-        sum_actual = sum(actual_list)
+    sum_prediction = sum(prediction_list)
 
-        # GET PREDICTION SCORE BY LOOPING THROUGH THE columns
-        prediction_list = []
-        for colname, col in current_matrix.iteritems():
-            column_sum = col.sum()
-            column_value = int(colname) * column_sum
-            # print("%d x %d = %d"%(column_sum, int(colname), column_value))
-
-            prediction_list.append(column_value)
-
-        sum_prediction = sum(prediction_list)
-
-        t_score, prob = calculate_t_score(prediction_list, actual_list)
+    t_score, prob = calculate_t_score(prediction_list, actual_list)
 
 # SUM ALL MATRICES
 def sum_all_matrices(matrix_df):
-    # print(matrix_list[matrix_list['iteration']==i] for i in matrix_list[['iteration']].nunique())
     matrices = matrix_df[['1', '2', '3', '4', '5', 'iteration']]
-
     d = matrices.set_index('iteration')
     sum_matrix = np.sum(d.loc[i].values for i in d.index.drop_duplicates().values)
-    
+    # sum_matrix = np.sum(e[1].values for e in matrices.groupby('iteration'))
     print(sum_matrix)
+
     avg_accu = sum(np.diag(sum_matrix))/sum_matrix.sum()
     print(avg_accu)
 
     matrix_df = pd.DataFrame(sum_matrix, columns=[1,2,3,4,5])
-    # matrix_df.index = np.arange(1, len(matrix_df) + 1)
-    # matrix_df['iteration'] = 100
     return matrix_df
 
 def main():
@@ -93,13 +80,10 @@ def main():
         input_file = input_dir+list_files[i]
         print(list_files[i])
         matrices_df = pd.read_csv(input_file)
-        print(matrices_df)
 
-        sum_all_matrices(matrices_df)
-
-
-
-    # calculate_rating(nb_df)
+        sum_matrix = sum_all_matrices(matrices_df)
+        print(type(sum_matrix))
+        calculate_rating(sum_matrix)
 
 if __name__ == "__main__":
     main()
