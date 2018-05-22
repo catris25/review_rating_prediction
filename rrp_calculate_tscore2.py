@@ -25,8 +25,8 @@ def calculate_t_score(pop_list, samp_list):
     t_score = (mean1 - mean2)/(standard_error*(np.sqrt((1/n1)+(1/n2))))
     prob = st.t.sf(np.abs(t_score), df=4)
 
-    print("t :",t_score)
-    print("p :",prob)
+    # print("t :",t_score)
+    # print("p :",prob)
 
     return(t_score, prob)
 
@@ -39,13 +39,16 @@ def main():
     df = pd.read_csv(input_file)
 
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
-    for i in range(0, len(list_files)):
-        input_file = input_dir+list_files[i]
-        print(list_files[i])
+    for f in list_files:
+        input_file = input_dir+f
+        print("\n",f)
         pred_df = pd.read_csv(input_file)
 
         pred_df = df[['review_id', 'asin', 'overall']].merge(pred_df, left_on='review_id', right_on='review_id')
         pred_df = pred_df.rename(columns = {'overall':'actual'})
+
+        significance_diff = []
+        alpha = 0.05
 
         # FOR EVERY ITERATION, CALCULATE THE T-SCORE AND PROBABILITY
         for j in range(0, pred_df['iteration'].nunique()):
@@ -55,6 +58,21 @@ def main():
 
             t_score, prob = calculate_t_score(prediction_list, actual_list)
 
+            # CHECK PROB RELATIVE TO ALPHA
+            if prob < alpha:
+                significance_diff.append(True)
+            else:
+                significance_diff.append(False)
+
+            # IF P IS VERY LOW (< alpha), REJECT THE NULL HYPOTHESIS
+            # CONCLUDE THAT THERE IS A STATISTICALLY SIGNINIFICANT DIFFERENCE BETWEEN THE TWO DATA
+            # IF P IS HIGH (>= alpha)
+            # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
+
+            # END OF LOOP
+        
+        print("is there any statistically significant difference?")
+        print(significance_diff)
 
 if __name__ == "__main__":
     main()

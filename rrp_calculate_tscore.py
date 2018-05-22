@@ -59,10 +59,13 @@ def main():
     input_file = '/home/lia/Documents/the_project/output/2018-05-22/df.csv'
     df = pd.read_csv(input_file)
 
+    significance_diff = []
+    alpha = 0.05
+
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
-    for i in range(0, len(list_files)):
-        input_file = input_dir+list_files[i]
-        print(list_files[i])
+    for f in list_files:
+        input_file = input_dir+f
+        print(f)
         pred_df = pd.read_csv(input_file)
 
         # CALCULATE SCORE PER REVIEW ON AVERAGE
@@ -74,6 +77,23 @@ def main():
         actual_list = df_comparison['actual'].tolist()
 
         t_score, prob = calculate_t_score(prediction_list, actual_list)
+
+        # CHECK PROB RELATIVE TO ALPHA
+        if prob < alpha:
+            significance_diff.append(True)
+        else:
+            significance_diff.append(False)
+
+        # IF P IS VERY LOW (< alpha), REJECT THE NULL HYPOTHESIS
+        # CONCLUDE THAT THERE IS A STATISTICALLY SIGNINIFICANT DIFFERENCE BETWEEN THE TWO DATA
+        # IF P IS HIGH (>= alpha)
+        # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
+
+        # END OF LOOP
+    print("\nRESULT")
+    print("is there any statistically significant difference?")
+    for f, b in zip(list_files, significance_diff):
+        print(f, b)
 
 if __name__ == "__main__":
     main()

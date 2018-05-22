@@ -27,8 +27,8 @@ def calculate_t_score(pop_list, samp_list):
     t_score = (mean1 - mean2)/(standard_error*(np.sqrt((1/n1)+(1/n2))))
     prob = st.t.sf(np.abs(t_score), df=4)
 
-    print("t :",t_score)
-    print("p :",prob)
+    # print("t :",t_score)
+    # print("p :",prob)
 
     return(t_score, prob)
 
@@ -75,6 +75,9 @@ def main():
     input_dir = '/home/lia/Documents/the_project/output/2018-05-22/matrices/'
     list_files = os.listdir(input_dir)
 
+    significance_diff = []
+    alpha = 0.05
+
     # READ FILE IN THE DIRECTORY ABOVE ONE BY ONE
     for f in list_files:
         input_file = input_dir + f
@@ -87,6 +90,23 @@ def main():
         # CALCULATE THE RATINGS FOLLOWED BY CALCULATING ITS T-SCORE AND PROBABILITY
         prediction_list, actual_list = calculate_rating(sum_matrix)
         t_score, prob = calculate_t_score(prediction_list, actual_list)
+
+        # CHECK PROB RELATIVE TO ALPHA
+        if prob < alpha:
+            significance_diff.append(True)
+        else:
+            significance_diff.append(False)
+
+        # IF P IS VERY LOW (< alpha), REJECT THE NULL HYPOTHESIS
+        # CONCLUDE THAT THERE IS A STATISTICALLY SIGNINIFICANT DIFFERENCE BETWEEN THE TWO DATA
+        # IF P IS HIGH (>= alpha)
+        # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
+
+        # END OF LOOP
+
+    print("is there any statistically significant difference?")
+    print(significance_diff)
+
 
 if __name__ == "__main__":
     main()
