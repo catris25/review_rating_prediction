@@ -72,13 +72,13 @@ def sum_all_matrices(matrix_df):
     return matrix_df
 
 def main():
-    input_dir = '/home/lia/Documents/the_project/output/2018-05-20/matrices/'
+    input_dir = '/home/lia/Documents/the_project/output/2018-05-22/matrices/'
     list_files = os.listdir(input_dir)
 
-    # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
-    for i in range(0, len(list_files)):
-        input_file = input_dir+list_files[i]
-        print(list_files[i])
+    # READ FILE IN THE DIRECTORY ABOVE ONE BY ONE
+    for f in list_files:
+        input_file = input_dir + f
+        print(f)
 
         # READ ALL THE MATRICES INSIDE FILE IN DATAFRAME FORMAT
         matrices_df = pd.read_csv(input_file)

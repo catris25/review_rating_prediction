@@ -32,10 +32,10 @@ def calculate_t_score(pop_list, samp_list):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    input_dir = '/home/lia/Documents/the_project/output/2018-05-20/data/'
+    input_dir = '/home/lia/Documents/the_project/output/2018-05-22/data/'
     list_files = os.listdir(input_dir)
 
-    input_file = '/home/lia/Documents/the_project/output/2018-05-20/df.csv'
+    input_file = '/home/lia/Documents/the_project/output/2018-05-22/df.csv'
     df = pd.read_csv(input_file)
 
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
@@ -56,6 +56,5 @@ def main():
             t_score, prob = calculate_t_score(prediction_list, actual_list)
 
 
-    # SET ORDER listdir BY DATE PLEASE
 if __name__ == "__main__":
     main()

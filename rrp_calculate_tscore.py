@@ -53,10 +53,10 @@ def compare_film_scores(review_scores_df, df):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    input_dir = '/home/lia/Documents/the_project/output/2018-05-20/data/'
+    input_dir = '/home/lia/Documents/the_project/output/2018-05-22/data/'
     list_files = os.listdir(input_dir)
 
-    input_file = '/home/lia/Documents/the_project/output/2018-05-20/df.csv'
+    input_file = '/home/lia/Documents/the_project/output/2018-05-22/df.csv'
     df = pd.read_csv(input_file)
 
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
@@ -72,10 +72,8 @@ def main():
         # CONVERT DF TO LISTS
         prediction_list = df_comparison['prediction'].tolist()
         actual_list = df_comparison['actual'].tolist()
-        
+
         t_score, prob = calculate_t_score(prediction_list, actual_list)
 
-
-    # SET ORDER listdir BY DATE PLEASE
 if __name__ == "__main__":
     main()

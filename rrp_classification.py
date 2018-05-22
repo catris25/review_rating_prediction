@@ -245,8 +245,8 @@ def classify_data(df, n_loop):
 
 
 def main():
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
 
     prep_df = pd.read_csv(input_file)
 
@@ -256,7 +256,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 10
+    n_loop = 30
     classify_data(prep_df, n_loop)
 
 
