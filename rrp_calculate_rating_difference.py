@@ -55,7 +55,7 @@ def calculate_rating(current_matrix):
 
     sum_prediction = sum(prediction_list)
 
-    t_score, prob = calculate_t_score(prediction_list, actual_list)
+    return (prediction_list, actual_list)
 
 # SUM ALL MATRICES
 def sum_all_matrices(matrix_df):
@@ -79,11 +79,14 @@ def main():
     for i in range(0, len(list_files)):
         input_file = input_dir+list_files[i]
         print(list_files[i])
-        matrices_df = pd.read_csv(input_file)
 
+        # READ ALL THE MATRICES INSIDE FILE IN DATAFRAME FORMAT
+        matrices_df = pd.read_csv(input_file)
+        # SUM ALL THE MATRICES IN DATAFRAME TO GET ONE SINGLE MATRIX
         sum_matrix = sum_all_matrices(matrices_df)
-        print(type(sum_matrix))
-        calculate_rating(sum_matrix)
+        # CALCULATE THE RATINGS FOLLOWED BY CALCULATING ITS T-SCORE AND PROBABILITY
+        prediction_list, actual_list = calculate_rating(sum_matrix)
+        t_score, prob = calculate_t_score(prediction_list, actual_list)
 
 if __name__ == "__main__":
     main()
