@@ -6,7 +6,7 @@ import random
 import time
 start_time = time.time()
 
-input_file='/home/lia/Documents/the_project/dataset/to_use/top_20_reviewed.csv'
+input_file='/home/lia/Documents/the_project/dataset/movies_tv_reviews_sm.csv'
 
 df = pandas.read_csv(input_file)
 
