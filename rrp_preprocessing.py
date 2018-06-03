@@ -4,14 +4,10 @@ import re, string
 import sys
 
 import nltk
-from nltk import bigrams, trigrams, FreqDist
 from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.tokenize import TweetTokenizer
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import PorterStemmer
-from nltk.corpus import stopwords, wordnet
-from nltk.classify import NaiveBayesClassifier
-from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 # ---- PREPROCESSING STEP ----
 
@@ -74,7 +70,6 @@ def preprocess_data(input_df):
     print(df['overall'].value_counts().sort_index())
     print(df[['reviewText', 'overall']].head(5))
 
-    # df = lemmatize(df)
     df = removing_punct(df)
     df = stop_words_removal(df)
     df = stemming(df)
@@ -86,13 +81,14 @@ def preprocess_data(input_df):
     return df
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
-    preprocessed_df.to_csv(output_file, index=False, sep=',')
+    # output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
+    # preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 
 
