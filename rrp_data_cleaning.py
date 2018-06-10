@@ -46,6 +46,7 @@ def remove_non_english(df):
         review = row['reviewText']
         lang = detect(str(review))
         if lang!='en':
+            print(lang, review)
             df.drop(i, inplace=True)
 
     print(len(df))
@@ -98,11 +99,11 @@ def main():
     df.rename( columns={'Unnamed: 0':'review_id'}, inplace=True )
     print(df.head(10))
 
-    # temp = get_top_movies(df, 30)
-    # temp = remove_short_long(temp, 10, 1000)
-    # temp = remove_non_english(temp)
-    #
-    # temp.to_csv("/home/lia/Dropbox/output/cleaned_data.csv")
+    temp = get_top_movies(df, 30)
+    temp = remove_short_long(temp, 10, 1000)
+    temp = remove_non_english(temp)
+
+    temp.to_csv("/home/lia/Dropbox/output/cleaned_data.csv")
 
 if __name__ == "__main__":
     main()

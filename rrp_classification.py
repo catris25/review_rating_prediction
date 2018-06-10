@@ -219,34 +219,34 @@ def classify_data(df, n_loop):
     logreg2_df = pd.concat(logreg2_list)
     logreg3_df = pd.concat(logreg3_list)
 
-    # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
-    folder_name = output_file+"matrices/"
-    nb1_df.to_csv(folder_name+"nb.csv")
-    nb2_df.to_csv(folder_name+"unp_smote_nb.csv")
-    nb3_df.to_csv(folder_name+"p_smote_nb.csv")
-    logreg1_df.to_csv(folder_name+"logreg.csv")
-    logreg2_df.to_csv(folder_name+"unp_smote_logreg.csv")
-    logreg3_df.to_csv(folder_name+"p_smote_logreg.csv")
-    print("confusion matrices all saved")
-
-    # SAVE REVIEW DATA WITH THEIR PREDICTED CLASSES
-    folder_name = output_file +"data/"
-    col_list = ['review_id', 'prediction', 'iteration']
-    pd.DataFrame(nb1_y_list, columns=col_list).to_csv(folder_name+"nb.csv", index=False)
-    pd.DataFrame(nb2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_nb.csv", index=False)
-    pd.DataFrame(nb3_y_list, columns=col_list).to_csv(folder_name+"p_smote_nb.csv", index=False)
-    pd.DataFrame(logreg1_y_list, columns=col_list).to_csv(folder_name+"logreg.csv", index=False)
-    pd.DataFrame(logreg2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_logreg.csv", index=False)
-    pd.DataFrame(logreg3_y_list, columns=col_list).to_csv(folder_name+"p_smote_logreg.csv", index=False)
-    print("result dataframes all saved")
-
-    # SAVE ORIGINAL DATAFRAME FOR LATER REFERENCE
-    df.to_csv(output_file+"df.csv", index=False)
+    # # SAVE ALL THE CONCATENATED DATAFRAMES TO THEIR OWN CSV FILES
+    # folder_name = output_file+"matrices/"
+    # nb1_df.to_csv(folder_name+"nb.csv")
+    # nb2_df.to_csv(folder_name+"unp_smote_nb.csv")
+    # nb3_df.to_csv(folder_name+"p_smote_nb.csv")
+    # logreg1_df.to_csv(folder_name+"logreg.csv")
+    # logreg2_df.to_csv(folder_name+"unp_smote_logreg.csv")
+    # logreg3_df.to_csv(folder_name+"p_smote_logreg.csv")
+    # print("confusion matrices all saved")
+    #
+    # # SAVE REVIEW DATA WITH THEIR PREDICTED CLASSES
+    # folder_name = output_file +"data/"
+    # col_list = ['review_id', 'prediction', 'iteration']
+    # pd.DataFrame(nb1_y_list, columns=col_list).to_csv(folder_name+"nb.csv", index=False)
+    # pd.DataFrame(nb2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_nb.csv", index=False)
+    # pd.DataFrame(nb3_y_list, columns=col_list).to_csv(folder_name+"p_smote_nb.csv", index=False)
+    # pd.DataFrame(logreg1_y_list, columns=col_list).to_csv(folder_name+"logreg.csv", index=False)
+    # pd.DataFrame(logreg2_y_list, columns=col_list).to_csv(folder_name+"unp_smote_logreg.csv", index=False)
+    # pd.DataFrame(logreg3_y_list, columns=col_list).to_csv(folder_name+"p_smote_logreg.csv", index=False)
+    # print("result dataframes all saved")
+    #
+    # # SAVE ORIGINAL DATAFRAME FOR LATER REFERENCE
+    # df.to_csv(output_file+"df.csv", index=False)
 
 
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/clean_data.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
+    input_file = "/home/lia/Dropbox/output/preprocessed.csv"
 
     prep_df = pd.read_csv(input_file)
 
@@ -256,7 +256,7 @@ def main():
     print(" %d reviews of %d movies"%(n_reviews, n_movies))
     print(prep_df['overall'].value_counts().sort_index())
 
-    n_loop = 30
+    n_loop = 1
     classify_data(prep_df, n_loop)
 
 

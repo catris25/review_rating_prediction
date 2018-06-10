@@ -5,8 +5,7 @@ import sys
 
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.stem.snowball import SnowballStemmer
-from nltk.stem import PorterStemmer
+from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 
 # ---- PREPROCESSING STEP ----
@@ -14,12 +13,10 @@ from nltk.corpus import stopwords
 # Punctuation removal, lowering capital letters, and tokenization
 def removing_punct(df):
     df_removal = []
-    tw = TweetTokenizer()
     for review in df['reviewText']:
-        temp = re.sub("[^a-zA-Z']", " ", str(review))
-        temp = temp.replace("'", "")
-        temp = temp.lower()
-        temp = tw.tokenize(temp)
+        temp = review.lower()
+        temp = re.sub("[^a-zA-Z]", " ", str(temp))
+        temp = word_tokenize(temp)
 
         df_removal.append(temp)
 
@@ -36,10 +33,6 @@ def stop_words_removal(df):
 
     stop_words = sw.union(["film", "movie", "movies", "films"])
 
-    # print(stop_words)
-    # import sys
-    # sys.exit("ok")
-
     for review in df['reviewText']:
         filtered_text = [word for word in review if not word in stop_words]
         df_filtering.append(filtered_text)
@@ -54,9 +47,8 @@ def stop_words_removal(df):
 def stemming(df):
     df_stemming = []
     ss = SnowballStemmer('english')
-    ps = PorterStemmer()
     for review in df['reviewText']:
-        stemmed_text = [ps.stem(word) for word in review]
+        stemmed_text = [ss.stem(word) for word in review]
         df_stemming.append(stemmed_text)
 
     df['reviewText'] = df_stemming
@@ -74,21 +66,17 @@ def preprocess_data(input_df):
     df = stop_words_removal(df)
     df = stemming(df)
 
-    output_file = '/home/lia/Documents/the_project/dataset/output/temp.csv'
-    df.to_csv(output_file, index=False, sep=',')
-    df = pd.read_csv(output_file)
-
     return df
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_5.csv'
+    input_file = "/home/lia/Dropbox/output/cleaned_data.csv"
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    # output_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_50_clean.csv'
-    # preprocessed_df.to_csv(output_file, index=False, sep=',')
+    output_file = "/home/lia/Dropbox/output/preprocessed.csv"
+    preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 
 
