@@ -32,10 +32,10 @@ def calculate_t_score(pop_list, samp_list):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
-    input_dir = '/home/lia/Documents/the_project/output/2018-05-22/data/'
+    input_dir = '/home/lia/Dropbox/output/2018-07-02/data/'
     list_files = os.listdir(input_dir)
 
-    input_file = '/home/lia/Documents/the_project/output/2018-05-22/df.csv'
+    input_file = '/home/lia/Dropbox/output/2018-07-02/df.csv'
     df = pd.read_csv(input_file)
 
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
@@ -70,7 +70,7 @@ def main():
             # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
 
             # END OF LOOP
-        
+
         print("is there any statistically significant difference?")
         print(significance_diff)
 
