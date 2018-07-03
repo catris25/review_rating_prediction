@@ -90,6 +90,8 @@ def main():
         # CALCULATE THE RATINGS FOLLOWED BY CALCULATING ITS T-SCORE AND PROBABILITY
         prediction_list, actual_list = calculate_rating(sum_matrix)
         t_score, prob = calculate_t_score(prediction_list, actual_list)
+        print("t:",t_score)
+        print("p:",prob)
 
         # CHECK PROB RELATIVE TO ALPHA
         if prob < alpha:

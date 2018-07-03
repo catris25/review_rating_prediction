@@ -62,6 +62,7 @@ def main():
     significance_diff = []
     alpha = 0.05
 
+    new_df_comp = pd.DataFrame()
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
     for f in list_files:
         input_file = input_dir+f
@@ -89,11 +90,20 @@ def main():
         # IF P IS HIGH (>= alpha)
         # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
 
+        # STORE THE DATAFRAME
+        df_comparison['name']=f
+        df_comparison['t']=t_score
+        df_comparison['p']=prob
+
+        new_df_comp = new_df_comp.append(df_comparison, ignore_index=True)
+
         # END OF LOOP
     print("\nRESULT")
     print("is there any statistically significant difference?")
     for f, b in zip(list_files, significance_diff):
         print(f, b)
+    # SAVE THE df_comparison and the t and p VALUES
+    new_df_comp.to_csv('/home/lia/Dropbox/output/2018-07-02/df_comparison.csv', index=False)
 
 if __name__ == "__main__":
     main()
