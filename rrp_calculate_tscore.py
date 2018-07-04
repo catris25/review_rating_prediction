@@ -103,7 +103,7 @@ def main():
     for f, b in zip(list_files, significance_diff):
         print(f, b)
     # SAVE THE df_comparison and the t and p VALUES
-    new_df_comp.to_csv('/home/lia/Dropbox/output/2018-07-02/df_comparison.csv', index=False)
+    # new_df_comp.to_csv('/home/lia/Dropbox/output/2018-07-02/df_comparison.csv', index=False)
 
 if __name__ == "__main__":
     main()

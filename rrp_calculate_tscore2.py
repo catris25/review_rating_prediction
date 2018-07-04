@@ -38,14 +38,16 @@ def main():
     input_file = '/home/lia/Dropbox/output/2018-07-02/df.csv'
     df = pd.read_csv(input_file)
 
+    all_sig_diff = []
+    header_names = []
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
     for f in list_files:
         input_file = input_dir+f
         print("\n",f)
         pred_df = pd.read_csv(input_file)
-
-        pred_df = df[['review_id', 'asin', 'overall']].merge(pred_df, left_on='review_id', right_on='review_id')
         pred_df = pred_df.rename(columns = {'overall':'actual'})
+        pred_df = df[['review_id', 'asin']].merge(pred_df, left_on='review_id', right_on='review_id')
+        # print(pred_df)
 
         significance_diff = []
         alpha = 0.05
@@ -72,7 +74,16 @@ def main():
             # END OF LOOP
 
         print("is there any statistically significant difference?")
+
+        all_sig_diff.append(significance_diff)
+        header_names.append(f)
         print(significance_diff)
+
+    # SAVE ALL SIGNINIFICANCE DIFFERENCE IN A DATAFRAME
+    all_sig_diff = pd.DataFrame(all_sig_diff).T
+    all_sig_diff.columns = header_names
+    print(all_sig_diff)
+    all_sig_diff.to_csv("/home/lia/Dropbox/output/2018-07-02/sig_diff_30_loops.csv", index=False)
 
 if __name__ == "__main__":
     main()
