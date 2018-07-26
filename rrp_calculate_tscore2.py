@@ -82,8 +82,8 @@ def main():
     # SAVE ALL SIGNINIFICANCE DIFFERENCE IN A DATAFRAME
     all_sig_diff = pd.DataFrame(all_sig_diff).T
     all_sig_diff.columns = header_names
-    print(all_sig_diff)
-    all_sig_diff.to_csv("/home/lia/Dropbox/output/2018-07-02/sig_diff_30_loops.csv", index=False)
+    # print(all_sig_diff)
+    # all_sig_diff.to_csv("/home/lia/Dropbox/output/2018-07-02/sig_diff_30_loops.csv", index=False)
 
 if __name__ == "__main__":
     main()
