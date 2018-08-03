@@ -38,6 +38,8 @@ def main():
     input_file = '/home/lia/Dropbox/output/2018-07-02/df.csv'
     df = pd.read_csv(input_file)
 
+    all_t_list = []
+    all_prob_list = []
     all_sig_diff = []
     header_names = []
     # FOR EVERY FILE IN ABOVE DIRECTORY, READ THE CONTENT AND DO CALCULATION
@@ -50,6 +52,10 @@ def main():
         # print(pred_df)
 
         significance_diff = []
+        prob_list = []
+        t_list = []
+
+        # DEFINE ALPHA VALUE
         alpha = 0.05
 
         # FOR EVERY ITERATION, CALCULATE THE T-SCORE AND PROBABILITY
@@ -59,7 +65,8 @@ def main():
             actual_list = current_df['actual'].tolist()
 
             t_score, prob = calculate_t_score(prediction_list, actual_list)
-
+            prob_list.append(prob)
+            t_list.append(t_score)
             # CHECK PROB RELATIVE TO ALPHA
             if prob < alpha:
                 significance_diff.append(True)
@@ -68,20 +75,37 @@ def main():
 
             # IF P IS VERY LOW (< alpha), REJECT THE NULL HYPOTHESIS
             # CONCLUDE THAT THERE IS A STATISTICALLY SIGNINIFICANT DIFFERENCE BETWEEN THE TWO DATA
-            # IF P IS HIGH (>= alpha)
+            # IF P IS HIGH (>= alpha), FAIL TO REJECT THE NULL HYPOTHESIS
             # CONCLUDE THAT THERE IS NO STATISTICALLY SIGNINIFICANT DIFFERENCE
 
             # END OF LOOP
 
         print("is there any statistically significant difference?")
 
+        # ROUND THE DECIMAL TO THE NEXT 6
+        prob_list = (np.around(np.array(prob_list),6))
+        t_list = (np.around(np.array(t_list),6))
+
         all_sig_diff.append(significance_diff)
         header_names.append(f)
-        print(significance_diff)
-
+        all_prob_list.append(prob_list)
+        all_t_list.append(t_list)
     # SAVE ALL SIGNINIFICANCE DIFFERENCE IN A DATAFRAME
-    all_sig_diff = pd.DataFrame(all_sig_diff).T
-    all_sig_diff.columns = header_names
+    df_t_list = pd.DataFrame(all_t_list).T
+    df_t_list.columns = header_names
+    df_t_list = df_t_list[['nb.csv', 'unp_smote_nb.csv','p_smote_nb.csv', 'logreg.csv', 'unp_smote_logreg.csv', 'p_smote_logreg.csv']]
+    print(df_t_list)
+
+    df_prob_list = pd.DataFrame(all_prob_list).T
+    df_prob_list.columns = header_names
+    df_prob_list = df_prob_list[['nb.csv', 'unp_smote_nb.csv','p_smote_nb.csv', 'logreg.csv', 'unp_smote_logreg.csv', 'p_smote_logreg.csv']]
+    print(df_prob_list)
+
+    df_t_list.to_csv("/home/lia/Dropbox/output/2018-07-02/t_score_30_loops.csv", index=False)
+    df_prob_list.to_csv("/home/lia/Dropbox/output/2018-07-02/pvalue_30_loops.csv", index=False)
+
+    # all_sig_diff = pd.DataFrame(all_sig_diff).T
+    # all_sig_diff.columns = header_names
     # print(all_sig_diff)
     # all_sig_diff.to_csv("/home/lia/Dropbox/output/2018-07-02/sig_diff_30_loops.csv", index=False)
 
