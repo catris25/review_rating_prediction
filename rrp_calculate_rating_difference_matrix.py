@@ -72,7 +72,8 @@ def sum_all_matrices(matrix_df):
     return matrix_df
 
 def main():
-    input_dir = '/home/lia/Dropbox/output/2018-07-02/matrices/'
+    # input_dir = '/home/lia/Dropbox/output/2018-07-02/matrices/'
+    input_dir = '/home/lia/Dropbox/output/additional_dataset/2018-08-12/matrices/'
     list_files = os.listdir(input_dir)
 
     significance_diff = []
