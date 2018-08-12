@@ -94,16 +94,17 @@ def remove_short_long(df, min_words, max_words):
 
 # MAIN PROGRAM
 def main():
-    input_file = '/home/lia/Documents/the_project/dataset/to_use/full/helpful.csv'
+    # input_file = '/home/lia/Documents/the_project/dataset/to_use/full/helpful.csv'
+    input_file = '/home/lia/Documents/the_project/dataset/helpfulness/zero.csv'
     df = pd.read_csv(input_file)
     df.rename( columns={'Unnamed: 0':'review_id'}, inplace=True )
     print(df.head(10))
 
     temp = get_top_movies(df, 30)
-    temp = remove_short_long(temp, 10, 1000)
+    temp = remove_short_long(temp, 0, 1000)
     temp = remove_non_english(temp)
 
-    temp.to_csv("/home/lia/Dropbox/output/cleaned_data.csv")
+    temp.to_csv("/home/lia/Dropbox/output/additional_dataset/cleaned_data.csv")
 
 if __name__ == "__main__":
     main()

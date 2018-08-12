@@ -70,12 +70,12 @@ def preprocess_data(input_df):
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/top_50_movies/top_50.csv'
-    input_file = "/home/lia/Dropbox/output/cleaned_data.csv"
+    input_file = "/home/lia/Dropbox/output/additional_dataset/cleaned_data.csv"
 
     df = pd.read_csv(input_file)
     preprocessed_df = preprocess_data(df)
 
-    output_file = "/home/lia/Dropbox/output/preprocessed.csv"
+    output_file = "/home/lia/Dropbox/output/additional_dataset/preprocessed.csv"
     preprocessed_df.to_csv(output_file, index=False, sep=',')
     print("PREPROCESSING done")
 

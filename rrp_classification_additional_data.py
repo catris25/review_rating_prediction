@@ -124,7 +124,7 @@ def vectorize_data(X_train, X_test):
     return (X_train_vectorized, X_test_vectorized)
 
 # CLASSIFY THE DATA IN DATAFRAME
-def classify_data(df, n_loop):
+def classify_data(train_df, test_df, n_loop):
     # DECLARE LISTS TO SAVE THE DATAFRAMES CONTAINING CONFUSION MATRICES
     nb1_list = []
     logreg1_list = []
@@ -150,7 +150,6 @@ def classify_data(df, n_loop):
         print("ITERATION-%d"%i)
         # SPLIT INTO TRAINING AND TESTING
         # train_df, test_df = train_test_split(df, test_size=0.3)
-        train_df = df
 
         # READ TRAINING DATA AND SEPARATE INTO X AND y
         X_train = train_df['reviewText']
@@ -230,7 +229,7 @@ def classify_data(df, n_loop):
     logreg3_sum = sum_all_matrices(logreg3_list, "p_smote_logreg")
 
     # SAVE ALL RESULTS TO FILES
-    output_file = "/home/lia/Dropbox/output/"+time.strftime("%Y-%m-%d")+"/"
+    output_file = "/home/lia/Dropbox/output/additional_dataset/"+time.strftime("%Y-%m-%d")+"/"
     os.makedirs("%s"%output_file, exist_ok=True)
     os.makedirs("%smatrices"%output_file, exist_ok=True)
     os.makedirs("%sdata"%output_file, exist_ok=True)
@@ -270,8 +269,7 @@ def classify_data(df, n_loop):
     print("result dataframes all saved")
 
     # SAVE ORIGINAL DATAFRAME FOR LATER REFERENCE
-    df.to_csv(output_file+"df.csv", index=False)
-
+    test_df.to_csv(output_file+"test_df.csv", index=False)
 
 def main():
     # input_file = '/home/lia/Documents/the_project/dataset/to_use/current/top_30_clean.csv'
@@ -280,7 +278,7 @@ def main():
     prep_df = pd.read_csv(input_file)
 
     # READ THE TESTING DATA (RAW/UNCLEANED DATA)
-    input_file = "/home/lia/Documents/the_project"
+    input_file = "/home/lia/Dropbox/output/additional_dataset/preprocessed.csv"
     raw_df = pd.read_csv(input_file)
 
     # PRINT STATS OF DATA
